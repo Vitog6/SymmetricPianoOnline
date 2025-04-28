@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Symmetric Piano Online</title>
+    <title>Piano Virtuale</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -25,7 +25,6 @@
         .piano {
             display: flex;
             justify-content: center;
-            align-items: center;
             position: relative;
         }
 
@@ -71,57 +70,57 @@
 <body>
 
     <div class="message">
-        <h1>Welcome to Symmetric Piano Online!</h1>
-        <p>Use your keyboard to play notes</p>
+        <h1>Piano Virtuale</h1>
+        <p>Premi i tasti per suonare il pianoforte!</p>
     </div>
 
     <div class="instructions">
-        <p><strong>Instructions:</strong></p>
-        <p>Press the following keys to play the corresponding piano notes:</p>
-        <p><strong>Left Hand:</strong> Q, 2, W, 3, E, R, 5, T, 6, Y, 7, U</p>
-        <p><strong>Right Hand:</strong> >, 1, A, 2, S, D, 4, F, 5, G, 6, H</p>
-        <p>Click the keys to play or press multiple keys at once!</p>
+        <p><strong>Istruzioni:</strong></p>
+        <p><strong>Mano Sinistra:</strong> A, S, D, F, G, H, J, K, L, ;, ', /</p>
+        <p><strong>Mano Destra:</strong> Q, W, E, R, T, Y, U, I, O, P, [, ], \\</p>
+        <p>Premi i tasti per suonare le note. Puoi anche cliccare sui tasti virtuali!</p>
     </div>
 
     <div class="piano">
-        <!-- Mano sinistra (24 tasti bianchi e neri) -->
-        <div id="q" class="white-key" data-note="C"></div>
+        <!-- Mano sinistra -->
+        <div id="a" class="white-key" data-note="C"></div>
         <div id="2" class="black-key" data-note="C#"></div>
-        <div id="w" class="white-key" data-note="D"></div>
+        <div id="s" class="white-key" data-note="D"></div>
         <div id="3" class="black-key" data-note="D#"></div>
-        <div id="e" class="white-key" data-note="E"></div>
-        <div id="r" class="white-key" data-note="F"></div>
+        <div id="d" class="white-key" data-note="E"></div>
+        <div id="f" class="white-key" data-note="F"></div>
         <div id="5" class="black-key" data-note="F#"></div>
-        <div id="t" class="white-key" data-note="G"></div>
+        <div id="g" class="white-key" data-note="G"></div>
         <div id="6" class="black-key" data-note="G#"></div>
-        <div id="y" class="white-key" data-note="A"></div>
+        <div id="h" class="white-key" data-note="A"></div>
         <div id="7" class="black-key" data-note="A#"></div>
-        <div id="u" class="white-key" data-note="B"></div>
+        <div id="j" class="white-key" data-note="B"></div>
 
-        <!-- Mano destra (altri 24 tasti bianchi e neri) -->
-        <div id=">" class="white-key" data-note="C" style="margin-left: 5px;"></div>
-        <div id="1" class="black-key" data-note="C#"></div>
-        <div id="a" class="white-key" data-note="D"></div>
-        <div id="2" class="black-key" data-note="D#"></div>
-        <div id="s" class="white-key" data-note="E"></div>
-        <div id="d" class="white-key" data-note="F"></div>
-        <div id="4" class="black-key" data-note="F#"></div>
-        <div id="f" class="white-key" data-note="G"></div>
-        <div id="5" class="black-key" data-note="G#"></div>
-        <div id="g" class="white-key" data-note="A"></div>
-        <div id="6" class="black-key" data-note="A#"></div>
-        <div id="h" class="white-key" data-note="B"></div>
+        <!-- Mano destra -->
+        <div id="q" class="white-key" data-note="C"></div>
+        <div id="w" class="black-key" data-note="C#"></div>
+        <div id="e" class="white-key" data-note="D"></div>
+        <div id="r" class="black-key" data-note="D#"></div>
+        <div id="t" class="white-key" data-note="E"></div>
+        <div id="y" class="white-key" data-note="F"></div>
+        <div id="u" class="black-key" data-note="F#"></div>
+        <div id="i" class="white-key" data-note="G"></div>
+        <div id="o" class="black-key" data-note="G#"></div>
+        <div id="p" class="white-key" data-note="A"></div>
+        <div id="[" class="black-key" data-note="A#"></div>
+        <div id="]" class="white-key" data-note="B"></div>
     </div>
 
     <script>
-        // Pianoforte suonato con i tasti
+        // Mappatura delle note
         const keyMap = {
-            "q": "C", "2": "C#", "w": "D", "3": "D#", "e": "E", "r": "F",
-            "5": "F#", "t": "G", "6": "G#", "y": "A", "7": "A#", "u": "B",
-            ">": "C", "1": "C#", "a": "D", "2": "D#", "s": "E", "d": "F",
-            "4": "F#", "f": "G", "5": "G#", "g": "A", "6": "A#", "h": "B"
+            "a": "C", "2": "C#", "s": "D", "3": "D#", "d": "E", "f": "F", "5": "F#",
+            "g": "G", "6": "G#", "h": "A", "7": "A#", "j": "B", "q": "C", "w": "C#",
+            "e": "D", "r": "D#", "t": "E", "y": "F", "u": "F#", "i": "G", "o": "G#",
+            "p": "A", "[": "A#", "]": "B"
         };
 
+        // Suoni per ogni nota
         const sounds = {
             "C": new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3'),
             "C#": new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3'),
@@ -137,15 +136,15 @@
             "B": new Audio('https://www.soundhelix.com/examples/mp3/SoundHelix-Song-12.mp3')
         };
 
-        // Funzione per suonare la nota
+        // Funzione per riprodurre il suono
         function playNote(note) {
             if (sounds[note]) {
-                sounds[note].currentTime = 0; // Per assicurarsi che non si sovrappongano i suoni
+                sounds[note].currentTime = 0; // Per evitare che il suono si sovrapponga
                 sounds[note].play();
             }
         }
 
-        // Funzione per aggiungere l'effetto di illuminazione ai tasti
+        // Funzione per illuminare i tasti
         function lightUpKey(keyElement) {
             keyElement.classList.add("active");
             setTimeout(() => {
@@ -153,12 +152,12 @@
             }, 150); // Rimuove l'illuminazione dopo 150ms
         }
 
-        // Aggiungere gli eventi di pressione dei tasti sulla tastiera
+        // Gestisce la pressione dei tasti dalla tastiera
         document.addEventListener("keydown", function(event) {
             const note = keyMap[event.key];
             if (note) {
                 playNote(note);
-
+                
                 // Trova il tasto corrispondente e accende l'illuminazione
                 const keyElement = document.querySelector(`#${event.key}`);
                 if (keyElement) {
@@ -167,7 +166,7 @@
             }
         });
 
-        // Aggiungere gli eventi di clic sui tasti della tastiera virtuale
+        // Gestisce il clic sui tasti virtuali
         const keys = document.querySelectorAll(".white-key, .black-key");
         keys.forEach(key => {
             key.addEventListener("click", function() {
