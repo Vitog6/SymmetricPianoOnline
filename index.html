@@ -50,7 +50,6 @@
 
             const oscillatore = audioContext.createOscillator();
             const gainNode = audioContext.createGain();
-            const lowPassFilter = audioContext.createBiquadFilter();
 
             oscillatore.type = "sine";
             oscillatore.frequency.setValueAtTime(frequenze[frequenza], audioContext.currentTime);
@@ -63,18 +62,13 @@
             gainNode.gain.setValueAtTime(0, audioContext.currentTime);  // Inizia con volume 0 (infusione)
             gainNode.gain.linearRampToValueAtTime(volumeBase, audioContext.currentTime + 0.05); // Graduale aumento
 
-            // Filtro passa-basso per ridurre le alte frequenze durante il fade-out
-            lowPassFilter.type = "lowpass";
-            lowPassFilter.frequency.setValueAtTime(3000, audioContext.currentTime);
-
-            oscillatore.connect(lowPassFilter);
-            lowPassFilter.connect(gainNode);
+            oscillatore.connect(gainNode);
             gainNode.connect(masterGain);
 
             oscillatore.start();
 
             // Memorizza l'oscillatore e il gainNode per il tasto premuto
-            tastiPremuti[frequenza] = { oscillatore, gainNode, lowPassFilter };
+            tastiPremuti[frequenza] = { oscillatore, gainNode };
 
             aggiornaVolumeMaster(); // Regola il volume master
         }
