@@ -51,15 +51,27 @@
     }
 
     function suonaNota(frequenza) {
-        inizializzaAudioContext();
+    inizializzaAudioContext();
 
-        const oscillatore = audioContext.createOscillator();
-        oscillatore.type = "sine";
-        oscillatore.frequency.setValueAtTime(frequenza, audioContext.currentTime);
-        oscillatore.connect(audioContext.destination);
-        oscillatore.start();
-        oscillatore.stop(audioContext.currentTime + 0.5);
-    }
+    const oscillatore = audioContext.createOscillator();
+    const gainNode = audioContext.createGain(); // Nuovo: crea un nodo di guadagno (volume)
+
+    oscillatore.type = "sine";
+    oscillatore.frequency.setValueAtTime(frequenza, audioContext.currentTime);
+
+    // Calcola il volume: più alta la frequenza, più basso il volume
+    // Regola 5000 come costante per adattare il bilanciamento volume
+    let volume = 5000 / frequenza;
+    if (volume > 1) volume = 1;       // Non superare il 100% di volume
+    if (volume < 0.05) volume = 0.05; // Non scendere sotto il 5% per sentire ancora
+    gainNode.gain.setValueAtTime(volume, audioContext.currentTime);
+
+    oscillatore.connect(gainNode);          // Connetti oscillatore al gain
+    gainNode.connect(audioContext.destination); // Connetti gain all'uscita
+
+    oscillatore.start();
+    oscillatore.stop(audioContext.currentTime + 0.5);
+}
 
     document.addEventListener("keydown", function(event) {
         const tasto = event.key;
