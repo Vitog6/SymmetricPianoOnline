@@ -87,9 +87,9 @@
             const nota = tastiPremuti[tasto];
             if (!nota) return; // Se la nota non è attiva, esci
 
-            // Dissolvenza morbida e arresto dell'oscillatore
-            nota.gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.3); // Prolungato per un arresto più morbido
-            nota.oscillatore.stop(audioContext.currentTime + 0.3);
+            // Dissolvenza ultra-morbida e arresto dell'oscillatore
+            nota.gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + 1); // Rampa più lunga (1 secondo)
+            nota.oscillatore.stop(audioContext.currentTime + 1); // Fermiamo l'oscillatore dopo 1 secondo
             delete tastiPremuti[tasto];
 
             aggiornaVolumeMaster(); // Regola il volume master
