@@ -59,7 +59,8 @@
             if (volumeBase > 1) volumeBase = 1;
             if (volumeBase < 0.05) volumeBase = 0.05;
 
-            gainNode.gain.setValueAtTime(volumeBase, audioContext.currentTime);
+            gainNode.gain.setValueAtTime(0, audioContext.currentTime);  // Inizia con volume 0 (infusione)
+            gainNode.gain.linearRampToValueAtTime(volumeBase, audioContext.currentTime + 0.05); // Graduale aumento
 
             oscillatore.connect(gainNode);
             gainNode.connect(masterGain);
@@ -70,8 +71,6 @@
             tastiPremuti[frequenza] = { oscillatore, gainNode };
 
             aggiornaVolumeMaster(); // Regola il volume master
-
-            // La nota suona finché il tasto rimane premuto
         }
 
         document.addEventListener("keydown", function(event) {
@@ -89,8 +88,8 @@
             if (!nota) return; // Se la nota non è attiva, esci
 
             // Dissolvenza morbida e arresto dell'oscillatore
-            nota.gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.2); // Prolungato per un arresto più morbido
-            nota.oscillatore.stop(audioContext.currentTime + 0.2);
+            nota.gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.3); // Prolungato per un arresto più morbido
+            nota.oscillatore.stop(audioContext.currentTime + 0.3);
             delete tastiPremuti[tasto];
 
             aggiornaVolumeMaster(); // Regola il volume master
