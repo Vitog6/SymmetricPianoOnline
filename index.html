@@ -78,8 +78,9 @@
             if (!nota) return; // Se la nota non è attiva, esci
 
             // Dissolvenza ultra-morbida e arresto dell'oscillatore
-            nota.gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + 1); // Rampa più lunga (1 secondo)
-            nota.oscillatore.stop(audioContext.currentTime + 1); // Fermiamo l'oscillatore dopo 1 secondo
+            const fadeOutDuration = 1; // durata di dissolvenza in secondi
+            nota.gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + fadeOutDuration); // Rampa più lunga
+            nota.oscillatore.stop(audioContext.currentTime + fadeOutDuration); // Fermiamo l'oscillatore dopo la dissolvenza
             delete tastiPremuti[frequenza];
 
             aggiornaVolumeMaster(); // Regola il volume master
