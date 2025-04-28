@@ -16,33 +16,10 @@
     <script>
         // Frequenze delle note (due ottave, doppio della frequenza nella seconda ottava)
         const frequenze = {
-            // Prima ottava (C4–B4)
-            "Tab": 261.63,  // C4 (Do)
-            "Q":   293.66,  // D4 (Re)
-            "W":   329.63,  // E4 (Mi)
-            "E":   370.00,  // F#4 (Fa#)
-            "R":   415.30,  // G#4 (Sol#)
-            "T":   466.16,  // A#4 (La#)
-            "1":   277.18,  // C#4 (Do#)
-            "2":   311.13,  // D#4 (Re#)
-            "3":   349.23,  // F4  (Fa)
-            "4":   392.00,  // G4  (Sol)
-            "5":   440.00,  // A4  (La)
-            "6":   493.88,  // B4  (Si)
-
-            // Seconda ottava (C5–B5) = doppio di ciascuna frequenza precedente
-            "Y":   261.63 * 2,  // C5 (Do)
-            "U":   293.66 * 2,  // D5 (Re)
-            "I":   329.63 * 2,  // E5 (Mi)
-            "O":   370.00 * 2,  // F#5 (Fa#)
-            "P":   415.30 * 2,  // G#5 (Sol#)
-            "è":   466.16 * 2,  // A#5 (La#)
-            "7":   277.18 * 2,  // C#5 (Do#)
-            "8":   311.13 * 2,  // D#5 (Re#)
-            "9":   349.23 * 2,  // F5  (Fa)
-            "0":   392.00 * 2,  // G5  (Sol)
-            "'":   440.00 * 2,  // A5  (La)
-            "ì":   493.88 * 2   // B5  (Si)
+            "Tab": 261.63,  "Q": 293.66,  "W": 329.63,  "E": 370.00,  "R": 415.30,  "T": 466.16,
+            "1": 277.18,  "2": 311.13,  "3": 349.23,  "4": 392.00,  "5": 440.00,  "6": 493.88,
+            "Y": 261.63 * 2, "U": 293.66 * 2, "I": 329.63 * 2, "O": 370.00 * 2, "P": 415.30 * 2, "[": 466.16 * 2,
+            "7": 277.18 * 2, "8": 311.13 * 2, "9": 349.23 * 2, "0": 392.00 * 2, "'": 440.00 * 2, "ì": 493.88 * 2
         };
 
         let audioContext;
@@ -111,12 +88,12 @@
             const nota = tastiPremuti[tasto];
             if (!nota) return; // Se la nota non è attiva, esci
 
-            // Fai una dissolvenza morbida e spegni l'oscillatore
-            nota.gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.1);
-            nota.oscillatore.stop(audioContext.currentTime + 0.1);
+            // Dissolvenza morbida e arresto dell'oscillatore
+            nota.gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.2); // Prolungato per un arresto più morbido
+            nota.oscillatore.stop(audioContext.currentTime + 0.2);
             delete tastiPremuti[tasto];
 
-            aggiornaVolumeMaster(); // Regola di nuovo il volume master
+            aggiornaVolumeMaster(); // Regola il volume master
         });
 
         document.body.addEventListener("click", inizializzaAudioContext); // Attiva AudioContext al primo click
