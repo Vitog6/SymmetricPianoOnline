@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="it">
+<!DOCTYPE html>
+<html lang="it">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,86 +11,115 @@
     <ul>
         <li>Prima ottava: Tab, Q, W, E, R, T, 1, 2, 3, 4, 5, 6</li>
         <li>Seconda ottava: Y, U, I, O, P, [, 7, 8, 9, 0, ', ì</li>
-    </ul><script>
-    // Frequenze delle note (due ottave, doppio della frequenza nella seconda ottava)
-    const frequenze = {
-        // Prima ottava (C4–B4)
-        "Tab": 261.63,  // C4 (Do)
-        "Q":   293.66,  // D4 (Re)
-        "W":   329.63,  // E4 (Mi)
-        "E":   370.00,  // F#4 (Fa#)
-        "R":   415.30,  // G#4 (Sol#)
-        "T":   466.16,  // A#4 (La#)
-        "1":   277.18,  // C#4 (Do#)
-        "2":   311.13,  // D#4 (Re#)
-        "3":   349.23,  // F4  (Fa)
-        "4":   392.00,  // G4  (Sol)
-        "5":   440.00,  // A4  (La)
-        "6":   493.88,  // B4  (Si)
+    </ul>
 
-        // Seconda ottava (C5–B5) = doppio di ciascuna frequenza precedente
-        "Y":   261.63 * 2,  // C5 (Do)
-        "U":   293.66 * 2,  // D5 (Re)
-        "I":   329.63 * 2,  // E5 (Mi)
-        "O":   370.00 * 2,  // F#5 (Fa#)
-        "P":   415.30 * 2,  // G#5 (Sol#)
-        "[":   466.16 * 2,  // A#5 (La#)
-        "7":   277.18 * 2,  // C#5 (Do#)
-        "8":   311.13 * 2,  // D#5 (Re#)
-        "9":   349.23 * 2,  // F5  (Fa)
-        "0":   392.00 * 2,  // G5  (Sol)
-        "'":   440.00 * 2,  // A5  (La)
-        "ì":   493.88 * 2   // B5  (Si)
-    };
+    <script>
+        // Frequenze delle note (due ottave, doppio della frequenza nella seconda ottava)
+        const frequenze = {
+            // Prima ottava (C4–B4)
+            "Tab": 261.63,  // C4 (Do)
+            "Q":   293.66,  // D4 (Re)
+            "W":   329.63,  // E4 (Mi)
+            "E":   370.00,  // F#4 (Fa#)
+            "R":   415.30,  // G#4 (Sol#)
+            "T":   466.16,  // A#4 (La#)
+            "1":   277.18,  // C#4 (Do#)
+            "2":   311.13,  // D#4 (Re#)
+            "3":   349.23,  // F4  (Fa)
+            "4":   392.00,  // G4  (Sol)
+            "5":   440.00,  // A4  (La)
+            "6":   493.88,  // B4  (Si)
 
-    let audioContext;
+            // Seconda ottava (C5–B5) = doppio di ciascuna frequenza precedente
+            "Y":   261.63 * 2,  // C5 (Do)
+            "U":   293.66 * 2,  // D5 (Re)
+            "I":   329.63 * 2,  // E5 (Mi)
+            "O":   370.00 * 2,  // F#5 (Fa#)
+            "P":   415.30 * 2,  // G#5 (Sol#)
+            "è":   466.16 * 2,  // A#5 (La#)
+            "7":   277.18 * 2,  // C#5 (Do#)
+            "8":   311.13 * 2,  // D#5 (Re#)
+            "9":   349.23 * 2,  // F5  (Fa)
+            "0":   392.00 * 2,  // G5  (Sol)
+            "'":   440.00 * 2,  // A5  (La)
+            "ì":   493.88 * 2   // B5  (Si)
+        };
 
-    function inizializzaAudioContext() {
-        if (!audioContext) {
-            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        let audioContext;
+        const tastiPremuti = {}; // Mappa per tenere traccia degli oscillatori attivi
+        let masterGain;
+
+        function inizializzaAudioContext() {
+            if (!audioContext) {
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                masterGain = audioContext.createGain();
+                masterGain.gain.value = 1;
+                masterGain.connect(audioContext.destination);
+            }
         }
-    }
 
-function suonaNota(frequenza) {
-    inizializzaAudioContext();
-
-    const oscillatore = audioContext.createOscillator();
-    const gainNode = audioContext.createGain();
-
-    oscillatore.type = "sine";
-    oscillatore.frequency.setValueAtTime(frequenza, audioContext.currentTime);
-
-    // Volume dinamico basato sulla frequenza
-    let volume = 5000 / frequenza;
-    if (volume > 1) volume = 1;
-    if (volume < 0.05) volume = 0.05;
-    gainNode.gain.setValueAtTime(volume, audioContext.currentTime);
-
-    oscillatore.connect(gainNode);
-    gainNode.connect(audioContext.destination);
-
-    oscillatore.start();
-
-    // Durata della nota
-    const durataNota = 0.5; // secondi
-
-    // Aggiunta dissolvenza morbida
-    const fadeOutTime = 0.1; // secondi per sfumare
-    gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + durataNota);
-
-    oscillatore.stop(audioContext.currentTime + durataNota + fadeOutTime);
-}
-    document.addEventListener("keydown", function(event) {
-        const tasto = event.key;
-        if (frequenze[tasto]) {
-            // Previeni lo spostamento di focus per il Tab
-            if (tasto === "Tab") event.preventDefault();
-            suonaNota(frequenze[tasto]);
+        function aggiornaVolumeMaster() {
+            // Calcola quante note stanno suonando
+            const nTasti = Object.keys(tastiPremuti).length;
+            if (nTasti > 0) {
+                masterGain.gain.setTargetAtTime(1 / nTasti, audioContext.currentTime, 0.01); // Volume master ridotto
+            } else {
+                masterGain.gain.setTargetAtTime(1, audioContext.currentTime, 0.01); // Volume normale
+            }
         }
-    });
 
-    document.body.addEventListener("click", inizializzaAudioContext);
-</script>
+        function suonaNota(frequenza) {
+            inizializzaAudioContext();
 
+            const oscillatore = audioContext.createOscillator();
+            const gainNode = audioContext.createGain();
+
+            oscillatore.type = "sine";
+            oscillatore.frequency.setValueAtTime(frequenze[frequenza], audioContext.currentTime);
+
+            // Volume dinamico in base alla frequenza
+            let volumeBase = 5000 / frequenze[frequenza];
+            if (volumeBase > 1) volumeBase = 1;
+            if (volumeBase < 0.05) volumeBase = 0.05;
+
+            gainNode.gain.setValueAtTime(volumeBase, audioContext.currentTime);
+
+            oscillatore.connect(gainNode);
+            gainNode.connect(masterGain);
+
+            oscillatore.start();
+
+            // Memorizza l'oscillatore e il gainNode per il tasto premuto
+            tastiPremuti[frequenza] = { oscillatore, gainNode };
+
+            aggiornaVolumeMaster(); // Regola il volume master
+
+            // La nota suona finché il tasto rimane premuto
+        }
+
+        document.addEventListener("keydown", function(event) {
+            const tasto = event.key;
+            if (frequenze[tasto] && !tastiPremuti[tasto]) {
+                // Previeni lo spostamento di focus per il Tab
+                if (tasto === "Tab") event.preventDefault();
+                suonaNota(tasto);
+            }
+        });
+
+        document.addEventListener("keyup", function(event) {
+            const tasto = event.key;
+            const nota = tastiPremuti[tasto];
+            if (!nota) return; // Se la nota non è attiva, esci
+
+            // Fai una dissolvenza morbida e spegni l'oscillatore
+            nota.gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + 0.1);
+            nota.oscillatore.stop(audioContext.currentTime + 0.1);
+            delete tastiPremuti[tasto];
+
+            aggiornaVolumeMaster(); // Regola di nuovo il volume master
+        });
+
+        document.body.addEventListener("click", inizializzaAudioContext); // Attiva AudioContext al primo click
+    </script>
 </body>
 </html>
