@@ -73,6 +73,18 @@
             aggiornaVolumeMaster(); // Regola il volume master
         }
 
+        function interrompiNota(frequenza) {
+            const nota = tastiPremuti[frequenza];
+            if (!nota) return; // Se la nota non è attiva, esci
+
+            // Dissolvenza ultra-morbida e arresto dell'oscillatore
+            nota.gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + 1); // Rampa più lunga (1 secondo)
+            nota.oscillatore.stop(audioContext.currentTime + 1); // Fermiamo l'oscillatore dopo 1 secondo
+            delete tastiPremuti[frequenza];
+
+            aggiornaVolumeMaster(); // Regola il volume master
+        }
+
         document.addEventListener("keydown", function(event) {
             const tasto = event.key;
             if (frequenze[tasto] && !tastiPremuti[tasto]) {
@@ -84,15 +96,7 @@
 
         document.addEventListener("keyup", function(event) {
             const tasto = event.key;
-            const nota = tastiPremuti[tasto];
-            if (!nota) return; // Se la nota non è attiva, esci
-
-            // Dissolvenza ultra-morbida e arresto dell'oscillatore
-            nota.gainNode.gain.linearRampToValueAtTime(0, audioContext.currentTime + 1); // Rampa più lunga (1 secondo)
-            nota.oscillatore.stop(audioContext.currentTime + 1); // Fermiamo l'oscillatore dopo 1 secondo
-            delete tastiPremuti[tasto];
-
-            aggiornaVolumeMaster(); // Regola il volume master
+            interrompiNota(tasto);  // Interrompi la nota e applica dissolvenza
         });
 
         document.body.addEventListener("click", inizializzaAudioContext); // Attiva AudioContext al primo click
