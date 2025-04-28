@@ -2,27 +2,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Suoni con la tastiera (Shift a sinistra)</title>
+    <title>Suoni con la tastiera (Scala su due ottave)</title>
 </head>
 <body>
     <h1>Premi un tasto per ascoltare la nota</h1>
-    <p>Premi uno dei seguenti tasti: Tab, Q, W, E, R, T, 1, 2, 3, 4, 5, 6.</p><script>
-    // Frequenze delle note:
-    // Lettere: Q, W, E, R, T, Y   -> shift left: Tab, Q, W, E, R, T
-    // Numeri:  2, 3, 4, 5, 6, 7   -> shift left: 1, 2, 3, 4, 5, 6
+    <p>Premi uno dei seguenti tasti:</p>
+    <ul>
+        <li>Prima ottava: Tab, Q, W, E, R, T, 1, 2, 3, 4, 5, 6</li>
+        <li>Seconda ottava: Y, U, I, O, P, [, 7, 8, 9, 0, -, =</li>
+    </ul><script>
+    // Frequenze delle note (due ottave, doppio della frequenza nella seconda ottava)
     const frequenze = {
-        "Tab": 261.63,  // Do  (era su Q)
-        "Q":   293.66,  // Re  (era su W)
-        "W":   329.63,  // Mi  (era su E)
-        "E":   370.00,  // Fa# (era su R)
-        "R":   415.30,  // Sol#(era su T)
-        "T":   466.16,  // La# (era su Y)
-        "1":   277.18,  // Do# (era su 2)
-        "2":   311.13,  // Re# (era su 3)
-        "3":   349.23,  // Fa  (era su 4)
-        "4":   392.00,  // Sol (era su 5)
-        "5":   440.00,  // La  (era su 6)
-        "6":   493.88   // Si  (era su 7)
+        // Prima ottava (C4–B4)
+        "Tab": 261.63,  // C4 (Do)
+        "Q":   293.66,  // D4 (Re)
+        "W":   329.63,  // E4 (Mi)
+        "E":   370.00,  // F#4 (Fa#)
+        "R":   415.30,  // G#4 (Sol#)
+        "T":   466.16,  // A#4 (La#)
+        "1":   277.18,  // C#4 (Do#)
+        "2":   311.13,  // D#4 (Re#)
+        "3":   349.23,  // F4  (Fa)
+        "4":   392.00,  // G4  (Sol)
+        "5":   440.00,  // A4  (La)
+        "6":   493.88,  // B4  (Si)
+
+        // Seconda ottava (C5–B5) = doppio di ciascuna frequenza precedente
+        "Y":   261.63 * 2,  // C5 (Do)
+        "U":   293.66 * 2,  // D5 (Re)
+        "I":   329.63 * 2,  // E5 (Mi)
+        "O":   370.00 * 2,  // F#5 (Fa#)
+        "P":   415.30 * 2,  // G#5 (Sol#)
+        "[":   466.16 * 2,  // A#5 (La#)
+        "7":   277.18 * 2,  // C#5 (Do#)
+        "8":   311.13 * 2,  // D#5 (Re#)
+        "9":   349.23 * 2,  // F5  (Fa)
+        "0":   392.00 * 2,  // G5  (Sol)
+        "-":   440.00 * 2,  // A5  (La)
+        "=":   493.88 * 2   // B5  (Si)
     };
 
     let audioContext;
