@@ -1,91 +1,60 @@
-<!DOCTYPE html>
-<html lang="it">
+<!DOCTYPE html><html lang="it">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Suoni con la tastiera</title>
+    <title>Suoni con la tastiera (Shift a sinistra)</title>
 </head>
 <body>
     <h1>Premi un tasto per ascoltare la nota</h1>
-    <p>Premi uno dei seguenti tasti: Q, W, E, R, T, Y, 2, 3, 4, 5, 6, 7, U, I, O, P, A, S, D, F, G, H, J, K, L, Z, X, C, V, B, N, M.</p>
+    <p>Premi uno dei seguenti tasti: Tab, Q, W, E, R, T, 1, 2, 3, 4, 5, 6.</p><script>
+    // Frequenze delle note:
+    // Lettere: Q, W, E, R, T, Y   -> shift left: Tab, Q, W, E, R, T
+    // Numeri:  2, 3, 4, 5, 6, 7   -> shift left: 1, 2, 3, 4, 5, 6
+    const frequenze = {
+        "Tab": 261.63,  // Do  (era su Q)
+        "Q":   293.66,  // Re  (era su W)
+        "W":   329.63,  // Mi  (era su E)
+        "E":   370.00,  // Fa# (era su R)
+        "R":   415.30,  // Sol#(era su T)
+        "T":   466.16,  // La# (era su Y)
+        "1":   277.18,  // Do# (era su 2)
+        "2":   311.13,  // Re# (era su 3)
+        "3":   349.23,  // Fa  (era su 4)
+        "4":   392.00,  // Sol (era su 5)
+        "5":   440.00,  // La  (era su 6)
+        "6":   493.88   // Si  (era su 7)
+    };
 
-    <script>
-        // Frequenze delle note (prima ottava)
-        const frequenzeBasse = {
-            "Q": 261.63,  // Do
-            "W": 293.66,  // Re
-            "E": 329.63,  // Mi
-            "R": 349.23,  // Fa
-            "T": 392.00,  // Sol
-            "Y": 440.00,  // La
-            "2": 466.16,  // Si
-            "3": 523.25,  // Do (ottava superiore)
-            "4": 587.33,  // Re (ottava superiore)
-            "5": 659.25,  // Mi (ottava superiore)
-            "6": 698.46,  // Fa (ottava superiore)
-            "7": 783.99   // Sol (ottava superiore)
-        };
+    let audioContext;
 
-        // Frequenze delle note (seconda ottava, doppio della frequenza)
-        const frequenzeAlte = {
-            "U": 523.25,  // Do (ottava superiore)
-            "I": 587.33,  // Re (ottava superiore)
-            "O": 659.25,  // Mi (ottava superiore)
-            "P": 698.46,  // Fa (ottava superiore)
-            "A": 783.99,  // Sol (ottava superiore)
-            "S": 880.00,  // La (ottava superiore)
-            "D": 987.77,  // Si (ottava superiore)
-            "F": 1046.50, // Do (ottava superiore)
-            "G": 1174.66, // Re (ottava superiore)
-            "H": 1318.51, // Mi (ottava superiore)
-            "J": 1396.91, // Fa (ottava superiore)
-            "K": 1567.98, // Sol (ottava superiore)
-            "L": 1760.00  // La (ottava superiore)
-        };
-
-        // Frequenze delle note (tasti neri della prima ottava)
-        const frequenzeBassiNeri = {
-            "2": 277.18,  // Do#
-            "3": 311.13,  // Re#
-            "5": 369.99,  // Fa#
-            "6": 415.30,  // Sol#
-            "7": 466.16   // La#
-        };
-
-        // Frequenze delle note (tasti neri della seconda ottava)
-        const frequenzeAltiNeri = {
-            "8": 554.37,  // Do# (ottava superiore)
-            "9": 622.25,  // Re# (ottava superiore)
-            "0": 739.99,  // Fa# (ottava superiore)
-            "-": 830.61,  // Sol# (ottava superiore)
-            "=": 932.32   // La# (ottava superiore)
-        };
-
-        // Funzione per generare e riprodurre il suono della nota
-        function suonaNota(frequenza) {
-            const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-            const oscillatore = audioContext.createOscillator();
-            oscillatore.type = "sine";  // Tipo di onda (onda sinusoidale)
-            oscillatore.frequency.setValueAtTime(frequenza, audioContext.currentTime);  // Impostiamo la frequenza
-            oscillatore.connect(audioContext.destination);  // Collegamento al sistema audio
-            oscillatore.start();
-            oscillatore.stop(audioContext.currentTime + 0.5);  // La nota dura per 0.5 secondi
+    function inizializzaAudioContext() {
+        if (!audioContext) {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
         }
+    }
 
-        // Aggiungi un ascoltatore per gli eventi di pressione dei tasti
-        document.addEventListener("keydown", function(event) {
-            const tasto = event.key.toUpperCase(); // Ottieni il tasto premuto
+    function suonaNota(frequenza) {
+        inizializzaAudioContext();
 
-            if (frequenzeBasse[tasto]) {
-                suonaNota(frequenzeBasse[tasto]);  // Riproduce la frequenza bassa
-            } else if (frequenzeAlte[tasto]) {
-                suonaNota(frequenzeAlte[tasto]);  // Riproduce la frequenza alta
-            } else if (frequenzeBassiNeri[tasto]) {
-                suonaNota(frequenzeBassiNeri[tasto]);  // Riproduce la frequenza bassa per i tasti neri
-            } else if (frequenzeAltiNeri[tasto]) {
-                suonaNota(frequenzeAltiNeri[tasto]);  // Riproduce la frequenza alta per i tasti neri
-            }
-        });
-    </script>
+        const oscillatore = audioContext.createOscillator();
+        oscillatore.type = "sine";
+        oscillatore.frequency.setValueAtTime(frequenza, audioContext.currentTime);
+        oscillatore.connect(audioContext.destination);
+        oscillatore.start();
+        oscillatore.stop(audioContext.currentTime + 0.5);
+    }
+
+    document.addEventListener("keydown", function(event) {
+        const tasto = event.key;
+        if (frequenze[tasto]) {
+            // Previeni lo spostamento di focus per il Tab
+            if (tasto === "Tab") event.preventDefault();
+            suonaNota(frequenze[tasto]);
+        }
+    });
+
+    document.body.addEventListener("click", inizializzaAudioContext);
+</script>
+
 </body>
 </html>
