@@ -41,14 +41,18 @@ function suonaNota(tasto) {
 function interrompiNota(tasto) {
   const nota = noteAttive.get(tasto);
   if (!nota || nota.fadeOut) return;
+
   nota.fadeOut = true;
   const now = audioContext.currentTime;
+  const fadeDuration = 0.7;
+
   nota.gain.gain.cancelScheduledValues(now);
-  nota.gain.gain.setTargetAtTime(0.0001, now, 0.05);
-  nota.osc.stop(now + 0.3);
+  nota.gain.gain.setTargetAtTime(0.0001, now, fadeDuration / 5); // dissolvenza morbida
+  nota.osc.stop(now + fadeDuration + 0.1); // arresto dopo dissolvenza completa
+
   setTimeout(() => {
     noteAttive.delete(tasto);
-  }, 400);
+  }, (fadeDuration + 0.2) * 1000);
 }
 
 function aggiornaVolumi() {
