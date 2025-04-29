@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="it">
+<!DOCTYPE html>
+<html lang="it">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,89 +13,86 @@
       "1": 277.18, "2": 311.13, "3": 349.23, "4": 392.00, "5": 440.00, "6": 493.88,
       "Y": 261.63 * 2, "U": 293.66 * 2, "I": 329.63 * 2, "O": 370.00 * 2, "P": 415.30 * 2, "[": 466.16 * 2,
       "7": 277.18 * 2, "8": 311.13 * 2, "9": 349.23 * 2, "0": 392.00 * 2, "'": 440.00 * 2, "ì": 493.88 * 2
-    };let audioContext;
-const noteAttive = new Map(); // tasto -> {osc, gain, statoFade}
+    };
 
-function inizializzaAudioContext() {
-  if (!audioContext) {
-    audioContext = new (window.AudioContext || window.webkitAudioContext)();
-    requestAnimationFrame(aggiornaVolumi);
-  }
-}
+    let audioContext;
+    const noteAttive = new Map(); // tasto -> {osc, gain, statoFade}
 
-function suonaNota(tasto) {
-  if (!frequenze[tasto] || noteAttive.has(tasto)) return;
-  inizializzaAudioContext();
-
-  const osc = audioContext.createOscillator();
-  const gain = audioContext.createGain();
-  osc.type = "sine";
-  osc.frequency.setValueAtTime(frequenze[tasto], audioContext.currentTime);
-
-  gain.gain.setValueAtTime(0, audioContext.currentTime);
-  osc.connect(gain).connect(audioContext.destination);
-  osc.start();
-
-  noteAttive.set(tasto, { osc, gain, fadeOut: false });
-}
-
-function interrompiNota(tasto) {
-  const nota = noteAttive.get(tasto);
-  if (!nota || nota.fadeOut) return;
-
-  nota.fadeOut = true;
-  const now = audioContext.currentTime;
-  const fadeDuration = 0.7;
-
-  nota.gain.gain.cancelScheduledValues(now);
-  nota.gain.gain.setTargetAtTime(0.0001, now, fadeDuration / 5); // dissolvenza morbida
-  nota.osc.stop(now + fadeDuration + 0.1); // arresto dopo dissolvenza completa
-
-  setTimeout(() => {
-    noteAttive.delete(tasto);
-  }, (fadeDuration + 0.2) * 1000);
-}
-
-function aggiornaVolumi() {
-  const attive = Array.from(noteAttive.values());
-  const now = audioContext.currentTime;
-
-  let pesi = attive.map(nota => nota.fadeOut ? 0 : 1);
-
-  // Ricalcola peso se in fadeOut
-  for (let i = 0; i < attive.length; i++) {
-    const nota = attive[i];
-    if (nota.fadeOut) {
-      const val = nota.gain.gain.value;
-      pesi[i] = val < 0.0002 ? 0 : val; // evita divisioni su 0
+    function inizializzaAudioContext() {
+      if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        requestAnimationFrame(aggiornaVolumi);
+      }
     }
-  }
 
-  const somma = pesi.reduce((a, b) => a + b, 0);
-  if (somma === 0) {
-    attive.forEach(nota => nota.gain.gain.setValueAtTime(0, now));
-  } else {
-    attive.forEach((nota, i) => {
-      const target = pesi[i] / somma;
-      nota.gain.gain.setTargetAtTime(target, now, 0.01);
+    function suonaNota(tasto) {
+      if (!frequenze[tasto] || noteAttive.has(tasto)) return;
+      inizializzaAudioContext();
+
+      const osc = audioContext.createOscillator();
+      const gain = audioContext.createGain();
+      osc.type = "sine";
+      osc.frequency.setValueAtTime(frequenze[tasto], audioContext.currentTime);
+
+      gain.gain.setValueAtTime(0, audioContext.currentTime);
+      osc.connect(gain).connect(audioContext.destination);
+      osc.start();
+
+      noteAttive.set(tasto, { osc, gain, fadeOut: false });
+    }
+
+    function interrompiNota(tasto) {
+      const nota = noteAttive.get(tasto);
+      if (!nota || nota.fadeOut) return;
+      nota.fadeOut = true;
+      const now = audioContext.currentTime;
+      nota.gain.gain.cancelScheduledValues(now);
+      nota.gain.gain.setTargetAtTime(0.0001, now, 0.05);
+      nota.osc.stop(now + 0.3);
+      setTimeout(() => {
+        noteAttive.delete(tasto);
+      }, 400);
+    }
+
+    function aggiornaVolumi() {
+      const attive = Array.from(noteAttive.values());
+      const now = audioContext.currentTime;
+
+      let pesi = attive.map(nota => nota.fadeOut ? 0 : 1);
+
+      // Ricalcola peso se in fadeOut
+      for (let i = 0; i < attive.length; i++) {
+        const nota = attive[i];
+        if (nota.fadeOut) {
+          const val = nota.gain.gain.value;
+          pesi[i] = val < 0.0002 ? 0 : val; // evita divisioni su 0
+        }
+      }
+
+      const somma = pesi.reduce((a, b) => a + b, 0);
+      if (somma === 0) {
+        attive.forEach(nota => nota.gain.gain.setValueAtTime(0, now));
+      } else {
+        attive.forEach((nota, i) => {
+          const target = pesi[i] / somma;
+          nota.gain.gain.setTargetAtTime(target, now, 0.01);
+        });
+      }
+
+      requestAnimationFrame(aggiornaVolumi);
+    }
+
+    document.addEventListener("keydown", (e) => {
+      if (e.repeat) return;
+      if (e.key === "Tab") e.preventDefault();
+      suonaNota(e.key);
     });
-  }
 
-  requestAnimationFrame(aggiornaVolumi);
-}
+    document.addEventListener("keyup", (e) => {
+      interrompiNota(e.key);
+    });
 
-document.addEventListener("keydown", (e) => {
-  if (e.repeat) return;
-  if (e.key === "Tab") e.preventDefault();
-  suonaNota(e.key);
-});
-
-document.addEventListener("keyup", (e) => {
-  interrompiNota(e.key);
-});
-
-document.body.addEventListener("click", inizializzaAudioContext);
-
+    document.body.addEventListener("click", inizializzaAudioContext);
   </script>
 </body>
 </html>
