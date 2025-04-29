@@ -69,7 +69,7 @@
       if (!nota) return;
 
       const now = audioContext.currentTime;
-      const durata = 1.0; // fade-out in secondi
+      const durata = 0.5; // fade-out in secondi
 
       nota.gainNode.gain.cancelScheduledValues(now);
       nota.gainNode.gain.setValueAtTime(nota.gainNode.gain.value, now);
