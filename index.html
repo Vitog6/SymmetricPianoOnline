@@ -1,110 +1,106 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Pianoforte Dinamico</title>
 </head>
 <body>
   <h1>Premi un tasto per ascoltare la nota</h1>
-  <p>Usa la tastiera per suonare. Due pressioni ravvicinate dello stesso tasto aumentano il volume percepito.</p>
+  <p>Le note si equalizzano dinamicamente. Una nota tenuta non si ripete. Il volume complessivo resta stabile.</p>
 
   <script>
     const frequenze = {
       "Tab": 261.63, "Q": 293.66, "W": 329.63, "E": 370.00, "R": 415.30, "T": 466.16,
       "1": 277.18, "2": 311.13, "3": 349.23, "4": 392.00, "5": 440.00, "6": 493.88,
-      "Y": 261.63 * 2, "U": 293.66 * 2, "I": 329.63 * 2, "O": 370.00 * 2, "P": 415.30 * 2, "[": 466.16 * 2,
-      "7": 277.18 * 2, "8": 311.13 * 2, "9": 349.23 * 2, "0": 392.00 * 2, "'": 440.00 * 2, "ì": 493.88 * 2
+      "Y": 523.25, "U": 587.33, "I": 659.25, "O": 739.99, "P": 830.61, "[": 932.33,
+      "7": 554.37, "8": 622.25, "9": 698.46, "0": 783.99, "'": 880.00, "ì": 987.77
     };
 
     let audioContext;
-    let mixGain;
-    const noteAttive = new Map(); // tasto -> array di istanze { osc, gain, fadeOut }
+    const noteAttive = new Map(); // {tasto: {osc, gain, state}}
+    let masterGain;
 
-    function inizializzaAudioContext() {
+    function inizializzaAudio() {
       if (!audioContext) {
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        mixGain = audioContext.createGain();
-        mixGain.gain.value = 1;
-        mixGain.connect(audioContext.destination);
+        masterGain = audioContext.createGain();
+        masterGain.gain.value = 1.0;
+        masterGain.connect(audioContext.destination);
       }
     }
 
     function aggiornaVolumi() {
-      // Calcola tutte le istanze ancora attive (comprese quelle in fade-out)
-      const tutteLeNote = Array.from(noteAttive.values()).flat();
-      const attive = tutteLeNote.filter(n => !n.fadeOut);
-      const fadeOuts = tutteLeNote.filter(n => n.fadeOut);
+      const attive = Array.from(noteAttive.values()).filter(n => n.state !== "finita");
+      const totale = attive.length;
 
-      const totale = attive.length + fadeOuts.length;
-      if (totale === 0) return;
-
-      attive.forEach(n => {
-        n.gain.gain.setTargetAtTime(1 / totale, audioContext.currentTime, 0.01);
+      attive.forEach(nota => {
+        if (nota.state === "attiva") {
+          nota.gain.gain.setTargetAtTime(1 / totale, audioContext.currentTime, 0.01);
+        } else if (nota.state === "rilascio") {
+          // Calcola proporzionalmente il volume residuo durante il fade
+          const timeLeft = nota.endTime - audioContext.currentTime;
+          const fadeRatio = Math.max(0, timeLeft / nota.fadeOutDuration);
+          nota.gain.gain.setTargetAtTime((1 / (totale + fadeRatio)) * fadeRatio, audioContext.currentTime, 0.01);
+        }
       });
     }
 
     function suonaNota(tasto) {
+      inizializzaAudio();
       if (!frequenze[tasto]) return;
-      inizializzaAudioContext();
+      if (noteAttive.has(tasto) && noteAttive.get(tasto).state === "attiva") return;
 
       const osc = audioContext.createOscillator();
       const gain = audioContext.createGain();
-      const freq = frequenze[tasto];
-
       osc.type = "sine";
-      osc.frequency.setValueAtTime(freq, audioContext.currentTime);
-      gain.gain.setValueAtTime(1, audioContext.currentTime);
+      osc.frequency.value = frequenze[tasto];
 
-      osc.connect(gain).connect(mixGain);
+      osc.connect(gain);
+      gain.connect(masterGain);
+
+      gain.gain.setValueAtTime(0, audioContext.currentTime);
       osc.start();
 
-      const istanza = { osc, gain, fadeOut: false };
-
-      if (!noteAttive.has(tasto)) noteAttive.set(tasto, []);
-      noteAttive.get(tasto).push(istanza);
+      const nota = { osc, gain, state: "attiva", endTime: null, fadeOutDuration: 0.4 };
+      gain.gain.linearRampToValueAtTime(1, audioContext.currentTime + 0.01);
+      noteAttive.set(tasto, nota);
 
       aggiornaVolumi();
     }
 
-    function interrompiNota(tasto) {
-      const istanze = noteAttive.get(tasto);
-      if (!istanze) return;
+    function rilasciaNota(tasto) {
+      const nota = noteAttive.get(tasto);
+      if (!nota || nota.state !== "attiva") return;
 
+      nota.state = "rilascio";
       const now = audioContext.currentTime;
-      const fadeDuration = 0.3;
+      nota.endTime = now + nota.fadeOutDuration;
+      nota.gain.gain.cancelScheduledValues(now);
+      nota.gain.gain.setValueAtTime(nota.gain.gain.value, now);
+      nota.gain.gain.linearRampToValueAtTime(0, nota.endTime);
+      nota.osc.stop(nota.endTime);
 
-      istanze.forEach((n, i) => {
-        if (n.fadeOut) return;
-        n.fadeOut = true;
-        n.gain.gain.cancelScheduledValues(now);
-        n.gain.gain.setValueAtTime(n.gain.gain.value, now);
-        n.gain.gain.exponentialRampToValueAtTime(0.0001, now + fadeDuration);
-        n.osc.stop(now + fadeDuration + 0.05);
-        setTimeout(() => {
-          const arr = noteAttive.get(tasto);
-          if (arr) {
-            arr.splice(arr.indexOf(n), 1);
-            if (arr.length === 0) noteAttive.delete(tasto);
-            aggiornaVolumi();
-          }
-        }, (fadeDuration + 0.1) * 1000);
-      });
+      setTimeout(() => {
+        nota.state = "finita";
+        noteAttive.delete(tasto);
+        aggiornaVolumi();
+      }, nota.fadeOutDuration * 1000);
+
+      aggiornaVolumi();
     }
 
-    document.addEventListener("keydown", function(event) {
-      const tasto = event.key;
-      if (frequenze[tasto]) {
-        if (tasto === "Tab") event.preventDefault(); // evita cambio focus
-        suonaNota(tasto);
-      }
+    document.addEventListener("keydown", e => {
+      const tasto = e.key;
+      if (tasto === "Tab") e.preventDefault();
+      suonaNota(tasto);
     });
 
-    document.addEventListener("keyup", function(event) {
-      interrompiNota(event.key);
+    document.addEventListener("keyup", e => {
+      rilasciaNota(e.key);
     });
 
-    document.body.addEventListener("click", inizializzaAudioContext);
+    document.body.addEventListener("click", inizializzaAudio);
   </script>
 </body>
 </html>
