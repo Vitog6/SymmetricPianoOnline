@@ -19,14 +19,25 @@
 
     let audioContext;
     let masterGain;
+    let limiter;
     const noteAttive = {};
 
     function inizializzaAudio() {
       if (!audioContext) {
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+        limiter = audioContext.createDynamicsCompressor();
+        limiter.threshold.setValueAtTime(-1, audioContext.currentTime); // soglia
+        limiter.knee.setValueAtTime(0, audioContext.currentTime);       // transizione netta
+        limiter.ratio.setValueAtTime(20, audioContext.currentTime);     // compressione forte
+        limiter.attack.setValueAtTime(0.001, audioContext.currentTime); // attacco rapido
+        limiter.release.setValueAtTime(0.05, audioContext.currentTime); // rilascio rapido
+
         masterGain = audioContext.createGain();
         masterGain.gain.value = 1;
-        masterGain.connect(audioContext.destination);
+
+        masterGain.connect(limiter);
+        limiter.connect(audioContext.destination);
       }
     }
 
@@ -40,10 +51,8 @@
       if (!frequenze[tasto]) return;
       inizializzaAudio();
 
-      // Se già attiva, ignora
       if (noteAttive[tasto]) return;
 
-      // Calcola nuovo gain prima di aggiungere la nota
       const nAttive = Object.keys(noteAttive).length;
       const nuovoVolume = 1 / (nAttive + 1);
       masterGain.gain.setValueAtTime(nuovoVolume, audioContext.currentTime);
@@ -54,7 +63,6 @@
       osc.frequency.setValueAtTime(frequenze[tasto], audioContext.currentTime);
       osc.type = 'sine';
 
-      // Nessun fade-in: volume subito attivo
       gainNode.gain.setValueAtTime(1, audioContext.currentTime);
 
       osc.connect(gainNode).connect(masterGain);
@@ -77,7 +85,7 @@
       nota.osc.stop(now + durataFade);
 
       delete noteAttive[tasto];
-      setTimeout(aggiornaMasterGain, durataFade * 1000); // Ricalcola dopo il fade-out
+      setTimeout(aggiornaMasterGain, durataFade * 1000);
     }
 
     document.addEventListener("keydown", (e) => {
