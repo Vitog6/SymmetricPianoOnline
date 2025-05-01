@@ -22,14 +22,10 @@
     let limiter;
     const noteAttive = {};
 
-    // Soglie per la modifica morbida di volume
-    const sogliaVolume = 0.2;  // Cambiamenti di volume superiori a 0.2 sono considerati "grandi"
-
     function inizializzaAudio() {
       if (!audioContext) {
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
-        // Limitatore per evitare picchi troppo alti
         limiter = audioContext.createDynamicsCompressor();
         limiter.threshold.setValueAtTime(-1, audioContext.currentTime); // soglia
         limiter.knee.setValueAtTime(0, audioContext.currentTime);       // transizione netta
@@ -59,20 +55,11 @@
 
       const nAttive = Object.keys(noteAttive).length;
       const nuovoVolume = 1 / (nAttive + 1);
-
-      // Verifica cambiamento di volume e applica fade solo se necessario
-      if (Math.abs(masterGain.gain.value - nuovoVolume) > sogliaVolume) {
-        // Se il cambiamento di volume è brusco, imposta un fade morbido
-        masterGain.gain.setValueAtTime(masterGain.gain.value, audioContext.currentTime);
-        masterGain.gain.linearRampToValueAtTime(nuovoVolume, audioContext.currentTime + 1);  // 1 secondo di fade
-      } else {
-        masterGain.gain.setValueAtTime(nuovoVolume, audioContext.currentTime);
-      }
+      masterGain.gain.setValueAtTime(nuovoVolume, audioContext.currentTime);
 
       const osc = audioContext.createOscillator();
       const gainNode = audioContext.createGain();
 
-      // Frequenza cambiata immediatamente
       osc.frequency.setValueAtTime(frequenze[tasto], audioContext.currentTime);
       osc.type = 'sine';
 
@@ -91,21 +78,14 @@
       if (!nota) return;
 
       const now = audioContext.currentTime;
-      const durataFade = 1; // 1 secondo di fade-out per volume
+      const durataFade = 0.5;
 
-      // Applicare fade-out sul volume
-      if (nota.gainNode.gain.value > sogliaVolume) {
-        nota.gainNode.gain.setValueAtTime(nota.gainNode.gain.value, now);
-        nota.gainNode.gain.linearRampToValueAtTime(0, now + durataFade);
-      } else {
-        nota.gainNode.gain.setValueAtTime(0, now);  // Imposta direttamente a 0 se il cambiamento non è brusco
-      }
-
-      // Fermiamo immediatamente l'oscillatore (frequenza è 0)
+      nota.gainNode.gain.setValueAtTime(1, now);
+      nota.gainNode.gain.linearRampToValueAtTime(0, now + durataFade);
       nota.osc.stop(now + durataFade);
 
       delete noteAttive[tasto];
-      setTimeout(aggiornaMasterGain, durataFade * 1000); // Ricalcola dopo il fade-out
+      setTimeout(aggiornaMasterGain, durataFade * 1000);
     }
 
     document.addEventListener("keydown", (e) => {
