@@ -20,7 +20,7 @@
     let audioContext;
     let masterGain;
     const noteAttive = {};
-    const noteInFadeOut = [];  // Nuova lista per tracciare le note in fade-out
+    const noteInFadeOut = [];
 
     function inizializzaAudio() {
       if (!audioContext) {
@@ -31,17 +31,19 @@
       }
     }
 
-    // Nuova versione con conteggio ponderato
     function aggiornaMasterGain() {
       const now = audioContext.currentTime;
       let pesoTotale = Object.keys(noteAttive).length;
 
-      noteInFadeOut.forEach(({ gainNode, fine }) => {
+      // Considera anche le note in fade-in/fade-out
+      noteInFadeOut.forEach(({ gainNode, inizio, fine }) => {
+        const durata = fine - inizio;
+        const tempoTrascorso = now - inizio;
         const tempoRimasto = fine - now;
-        const durataFade = 0.5;
-        if (tempoRimasto > 0) {
-          const proporzione = tempoRimasto / durataFade;
-          pesoTotale += proporzione;
+
+        if (tempoRimasto > 0 && tempoTrascorso >= 0) {
+          const proporzione = tempoTrascorso / durata;
+          pesoTotale += proporzione; // Contribuisce in modo crescente in fade-in
         }
       });
 
@@ -53,10 +55,14 @@
       if (!frequenze[tasto]) return;
       inizializzaAudio();
 
+      // Se già attiva, ignora
       if (noteAttive[tasto]) return;
 
+      const fadeInDurata = 0.1; // Fade-in di 0.1 secondi
       const nAttive = Object.keys(noteAttive).length;
       const nuovoVolume = 1 / (nAttive + 1);
+
+      // Calcola il volume prima di aggiungere la nuova nota
       masterGain.gain.setValueAtTime(nuovoVolume, audioContext.currentTime);
 
       const osc = audioContext.createOscillator();
@@ -64,7 +70,13 @@
 
       osc.frequency.setValueAtTime(frequenze[tasto], audioContext.currentTime);
       osc.type = 'sine';
-      gainNode.gain.setValueAtTime(1, audioContext.currentTime);
+
+      // Fade-in: dal silenzio al massimo volume in 0.1 secondi
+      gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+      gainNode.gain.linearRampToValueAtTime(1, audioContext.currentTime + fadeInDurata);
+
+      // Aggiungi la nota alla lista delle note in fade
+      noteInFadeOut.push({ gainNode: gainNode, inizio: audioContext.currentTime, fine: audioContext.currentTime + fadeInDurata });
 
       osc.connect(gainNode).connect(masterGain);
       osc.start();
@@ -74,25 +86,22 @@
       aggiornaMasterGain();
     }
 
-    // Modificata per aggiungere al conteggio il fade-out
     function interrompiNota(tasto) {
       const nota = noteAttive[tasto];
       if (!nota) return;
 
       const now = audioContext.currentTime;
-      const durataFade = 0.5;
+      const durataFade = 0.5; // Durata del fade-out
 
       nota.gainNode.gain.setValueAtTime(1, now);
       nota.gainNode.gain.linearRampToValueAtTime(0, now + durataFade);
       nota.osc.stop(now + durataFade);
 
-      noteInFadeOut.push({ gainNode: nota.gainNode, fine: now + durataFade });
-      delete noteAttive[tasto];
+      // Aggiungi la nota alla lista delle note in fade-out
+      noteInFadeOut.push({ gainNode: nota.gainNode, inizio: now, fine: now + durataFade });
 
-      setTimeout(() => {
-        noteInFadeOut.splice(0, noteInFadeOut.length);
-        aggiornaMasterGain();
-      }, durataFade * 1000);
+      delete noteAttive[tasto];
+      setTimeout(aggiornaMasterGain, durataFade * 1000); // Ricalcola dopo il fade-out
     }
 
     document.addEventListener("keydown", (e) => {
