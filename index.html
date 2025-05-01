@@ -1,5 +1,4 @@
-<!DOCTYPE html>
-<html lang="it">
+<!DOCTYPE html><html lang="it">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -11,109 +10,142 @@
     <ul>
         <li>Prima ottava: Tab, Q, W, E, R, T, 1, 2, 3, 4, 5, 6</li>
         <li>Seconda ottava: Y, U, I, O, P, [, 7, 8, 9, 0, ', ì</li>
-    </ul>
+    </ul><script>
+    const frequenze = {
+        "Tab": 132.00,  "Q": 139.82,  "W": 148.16,  "E": 156.96,  "R": 166.31,  "T": 176.20,
+        "1": 186.65,   "2": 197.76,  "3": 209.53,  "4": 222.00,  "5": 235.20,  "6": 249.18,
+        "Y": 264.00,   "U": 279.63,  "I": 296.33,  "O": 313.91,  "P": 332.63,  "[": 352.40,
+        "7": 373.30,   "8": 395.52,  "9": 419.06,  "0": 444.00, "'": 470.40,  "ì": 498.36
+    };
 
-    <script>
-        const frequenze = {
-            "Tab": 33.00,  "Q": 34.96,  "W": 37.04,  "E": 39.24,  "R": 41.58,  "T": 44.05,
-            "1": 46.67,    "2": 49.44,  "3": 52.38,  "4": 55.50,  "5": 58.80,  "6": 62.30,
-            "Y": 66.00,    "U": 69.92,  "I": 74.08,  "O": 78.49,  "P": 83.15,  "[": 88.10,
-            "7": 93.34,    "8": 98.89,  "9": 104.77, "0": 111.00, "'": 117.60, "ì": 124.59
-        };
+    let audioContext;
+    const oscillatoriAttivi = {};
+    const gainNodesAttivi = {};
+    const fadeOutDurata = 0.5;
+    let masterGain;
 
-        let audioContext;
-        const oscillatoriAttivi = {};
-        const gainNodesAttivi = {};
-        const fadeOutDurata = 0.5; // più breve per evitare riverbero
-        let masterGain;
+    function inizializzaAudioContext() {
+        if (!audioContext) {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            masterGain = audioContext.createGain();
+            masterGain.gain.value = 1;
+            masterGain.connect(audioContext.destination);
+        }
+    }
 
-        function inizializzaAudioContext() {
-            if (!audioContext) {
-                audioContext = new (window.AudioContext || window.webkitAudioContext)();
-                masterGain = audioContext.createGain();
-                masterGain.gain.value = 1;
-                masterGain.connect(audioContext.destination);
-            }
+    function aggiornaVolumi() {
+        const attivi = Object.values(gainNodesAttivi);
+<!DOCTYPE html><html lang="it">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Suoni con la tastiera (Scala su due ottave)</title>
+</head>
+<body>
+    <h1>Premi un tasto per ascoltare la nota</h1>
+    <p>Premi uno dei seguenti tasti:</p>
+    <ul>
+        <li>Prima ottava: Tab, Q, W, E, R, T, 1, 2, 3, 4, 5, 6</li>
+        <li>Seconda ottava: Y, U, I, O, P, [, 7, 8, 9, 0, ', ì</li>
+    </ul><script>
+    const frequenze = {
+        "Tab": 132.00,  "Q": 139.82,  "W": 148.16,  "E": 156.96,  "R": 166.31,  "T": 176.20,
+        "1": 186.65,   "2": 197.76,  "3": 209.53,  "4": 222.00,  "5": 235.20,  "6": 249.18,
+        "Y": 264.00,   "U": 279.63,  "I": 296.33,  "O": 313.91,  "P": 332.63,  "[": 352.40,
+        "7": 373.30,   "8": 395.52,  "9": 419.06,  "0": 444.00, "'": 470.40,  "ì": 498.36
+    };
+
+    let audioContext;
+    const oscillatoriAttivi = {};
+    const gainNodesAttivi = {};
+    const fadeOutDurata = 0.5;
+    let masterGain;
+
+    function inizializzaAudioContext() {
+        if (!audioContext) {
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            masterGain = audioContext.createGain();
+            masterGain.gain.value = 1;
+            masterGain.connect(audioContext.destination);
+        }
+    }
+
+    function aggiornaVolumi() {
+        const attivi = Object.values(gainNodesAttivi);
+        const now = audioContext.currentTime;
+        let pesi = attivi.map(gain => gain.gain.value);
+        let sommaPesi = pesi.reduce((a, b) => a + b, 0);
+        attivi.forEach((gainNode, i) => {
+            let peso = pesi[i] / sommaPesi;
+            gainNode.gain.cancelScheduledValues(now);
+            gainNode.gain.setValueAtTime(peso, now);
+        });
+    }
+
+    function suonaNota(tasto) {
+        inizializzaAudioContext();
+        const freq = frequenze[tasto];
+        const now = audioContext.currentTime;
+
+        if (oscillatoriAttivi[tasto]) {
+            interrompiNota(tasto);
         }
 
-        function aggiornaVolumi() {
-            const attivi = Object.values(gainNodesAttivi);
-            const now = audioContext.currentTime;
+        const oscillatore = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
 
-            let pesi = attivi.map(gain => gain.gain.value);
-            let sommaPesi = pesi.reduce((a, b) => a + b, 0);
+        oscillatore.type = "sine";
+        oscillatore.frequency.setValueAtTime(freq, now);
 
-            attivi.forEach((gainNode, i) => {
-                let peso = pesi[i] / sommaPesi;
-                gainNode.gain.cancelScheduledValues(now);
-                gainNode.gain.setValueAtTime(peso, now);
-            });
-        }
+        gainNode.gain.setValueAtTime(0.0001, now);
+        gainNode.gain.linearRampToValueAtTime(1, now + 0.01);
 
-        function suonaNota(tasto) {
-            inizializzaAudioContext();
-            const freq = frequenze[tasto];
-            const now = audioContext.currentTime;
+        oscillatore.connect(gainNode);
+        gainNode.connect(masterGain);
 
-            // Stop se già attiva (così si risente se la premi di nuovo)
-            if (oscillatoriAttivi[tasto]) {
-                interrompiNota(tasto);
-            }
+        oscillatore.start(now);
 
-            const oscillatore = audioContext.createOscillator();
-            const gainNode = audioContext.createGain();
+        oscillatoriAttivi[tasto] = oscillatore;
+        gainNodesAttivi[tasto] = gainNode;
 
-            oscillatore.type = "sine";
-            oscillatore.frequency.setValueAtTime(freq, now);
+        aggiornaVolumi();
+    }
 
-            gainNode.gain.setValueAtTime(0.0001, now);
-            gainNode.gain.linearRampToValueAtTime(1, now + 0.01);
+    function interrompiNota(tasto) {
+        const osc = oscillatoriAttivi[tasto];
+        const gain = gainNodesAttivi[tasto];
+        if (!osc || !gain) return;
 
-            oscillatore.connect(gainNode);
-            gainNode.connect(masterGain);
+        const now = audioContext.currentTime;
+        gain.gain.cancelScheduledValues(now);
+        gain.gain.setValueAtTime(gain.gain.value, now);
+        gain.gain.linearRampToValueAtTime(0.0001, now + fadeOutDurata);
+        osc.stop(now + fadeOutDurata);
 
-            oscillatore.start(now);
-
-            oscillatoriAttivi[tasto] = oscillatore;
-            gainNodesAttivi[tasto] = gainNode;
-
+        setTimeout(() => {
+            delete oscillatoriAttivi[tasto];
+            delete gainNodesAttivi[tasto];
             aggiornaVolumi();
+        }, fadeOutDurata * 1000);
+    }
+
+    document.addEventListener("keydown", function(event) {
+        const tasto = event.key;
+        if (frequenze[tasto] && !event.repeat) {
+            if (tasto === "Tab") event.preventDefault();
+            suonaNota(tasto);
         }
+    });
 
-        function interrompiNota(tasto) {
-            const osc = oscillatoriAttivi[tasto];
-            const gain = gainNodesAttivi[tasto];
-            if (!osc || !gain) return;
-
-            const now = audioContext.currentTime;
-            gain.gain.cancelScheduledValues(now);
-            gain.gain.setValueAtTime(gain.gain.value, now);
-            gain.gain.linearRampToValueAtTime(0.0001, now + fadeOutDurata);
-            osc.stop(now + fadeOutDurata);
-
-            setTimeout(() => {
-                delete oscillatoriAttivi[tasto];
-                delete gainNodesAttivi[tasto];
-                aggiornaVolumi();
-            }, fadeOutDurata * 1000);
+    document.addEventListener("keyup", function(event) {
+        const tasto = event.key;
+        if (frequenze[tasto]) {
+            interrompiNota(tasto);
         }
+    });
 
-        document.addEventListener("keydown", function(event) {
-            const tasto = event.key;
-            if (frequenze[tasto] && !event.repeat) {
-                if (tasto === "Tab") event.preventDefault();
-                suonaNota(tasto);
-            }
-        });
+    document.body.addEventListener("click", inizializzaAudioContext);
+</script>
 
-        document.addEventListener("keyup", function(event) {
-            const tasto = event.key;
-            if (frequenze[tasto]) {
-                interrompiNota(tasto);
-            }
-        });
-
-        document.body.addEventListener("click", inizializzaAudioContext);
-    </script>
 </body>
 </html>
