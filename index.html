@@ -12,6 +12,13 @@
       align-items: center;
       height: 100vh;
       margin: 0;
+      color: white; /* Impostato per tutto il testo */
+      font-family: sans-serif;
+    }
+    .intro {
+      position: absolute;
+      top: 20px;
+      text-align: center;
     }
     .keyboard {
       position: relative;
@@ -63,8 +70,8 @@
 </head>
 <body>
   <div class="intro">
-    <h1>Benvenuti alla tastiera musicale sperimentale</h1>
-    <p>Questa è una tastiera musicale che emula le note di un pianoforte tradizionale, ma con una disposizione dei tasti completamente diversa. Ogni tasto corrisponde a una delle 12 note della scala musicale, e le note sono assegnate ai tasti come segue:</p>
+    <h1>     Benvenuti alla tastiera musicale sperimentale</h1>
+    <p>     Questa è una tastiera musicale che emula le note di un pianoforte tradizionale, ma con una disposizione dei tasti completamente diversa. Ogni tasto corrisponde a una delle 12 note della scala musicale, e le note sono assegnate ai tasti come segue:</p>
     <ul>
       <li><strong>Tab</strong>: Do</li>
       <li><strong>Q</strong>: Re</li>
@@ -91,10 +98,10 @@
       <li><strong>'</strong>: La</li>
       <li><strong>ì</strong>: Si</li>
     </ul>
-    <p>Questa tastiera è un progetto sperimentale che esplora una nuova disposizione dei tasti. Sebbene le note siano le stesse di un piano tradizionale, l'organizzazione dei tasti è completamente differente. In questo nuovo tipo di pianoforte, tutte le dodici note sono suddivise in toni e semitoni, con sei tasti neri e sei bianchi.</p>
-    <p>In questa tastiera, i tasti bianchi sono separati da un tono di distanza l'uno dall'altro, così come i tasti neri. Questa struttura consente di riprodurre qualsiasi brano musicale spostandosi tra i tasti in modo più fluido, permettendo di suonare gli stessi brani ma spostandosi di qualsivoglia numero di semitoni.</p>
-    <p>Questo è un esperimento per esplorare un nuovo tipo di pianoforte che potrebbe un giorno aprire la strada a modi più versatili e creativi di eseguire la musica. Spero che tu possa apprezzare la magnifica regolarità e simmatricità delle dodici note che sono, a mio parere, mal rapresentate dall' attuale disposizione dei tasti nei pianoforti comuni.</p>
-    <p> Il suono no è dei migliori lo so ma il mio obbiettivo era l' idea che spero possa esseere apprezzata. Grazie </p>
+    <p>     Questa tastiera è un progetto sperimentale che esplora una nuova disposizione dei tasti. Sebbene le note siano le stesse di un piano tradizionale, l'organizzazione dei tasti è completamente differente. In questo nuovo tipo di pianoforte, tutte le dodici note sono suddivise in toni e semitoni, con sei tasti neri e sei bianchi.</p>
+    <p>     In questa tastiera, i tasti bianchi sono separati da un tono di distanza l'uno dall'altro, così come i tasti neri. Questa struttura consente di riprodurre qualsiasi brano musicale spostandosi tra i tasti in modo più fluido, permettendo di suonare gli stessi brani ma spostandosi di qualsivoglia numero di semitoni.</p>
+    <p>     Questo è un esperimento per esplorare un nuovo tipo di pianoforte che potrebbe un giorno aprire la strada a modi più versatili e creativi di eseguire la musica. Spero che tu possa apprezzare la magnifica regolarità e simmatricità delle dodici note che sono, a mio parere, mal rapresentate dall' attuale disposizione dei tasti nei pianoforti comuni.</p>
+    <p>     Il suono non è dei migliori lo so, ma il mio obiettivo era l'idea che spero possa essere apprezzata. Grazie.</p>
   </div>
   <div class="keyboard" id="keyboard"></div>
   <script>
@@ -104,14 +111,14 @@
       "Y": 523.25, "U": 587.33, "I": 659.26, "O": 740.00, "P": 830.61, "è": 932.33,
       "7": 554.37, "8": 622.25, "9": 698.46, "0": 784.00, "'": 880.00, "ì": 987.77
     };
-const noteBianche = [
-  "Do", "Re", "Mi", "Fa#", "Sol#", "La#", "Do", "Re", "Mi", "Fa#", "Sol#", "La#"
-].reverse();
+    const noteBianche = [
+      "Do", "Re", "Mi", "Fa#", "Sol#", "La#", "Do", "Re", "Mi", "Fa#", "Sol#", "La#"
+    ].reverse();
 
-const noteNere = [
-  "Do#", "Re#", "Fa", "Sol", "La", "Si", "Do#", "Re#", "Fa", "Sol", "La", "Si"
-].reverse();
-    const tastiBianchi = ["Tab", "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "["];
+    const noteNere = [
+      "Do#", "Re#", "Fa", "Sol", "La", "Si", "Do#", "Re#", "Fa", "Sol", "La", "Si"
+    ].reverse();
+    const tastiBianchi = ["Tab", "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "è"];
     const tastiNeri = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "'", "ì"];
 
     tastiBianchi.reverse();
@@ -180,7 +187,7 @@ const noteNere = [
       const osc = audioContext.createOscillator();
       const gainNode = audioContext.createGain();
 
-   osc.frequency.setValueAtTime(frequenze[tasto], audioContext.currentTime);
+      osc.frequency.setValueAtTime(frequenze[tasto], audioContext.currentTime);
       osc.type = 'sine';
 
       gainNode.gain.setValueAtTime(1, audioContext.currentTime);
