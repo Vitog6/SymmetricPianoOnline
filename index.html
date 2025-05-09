@@ -5,16 +5,16 @@
   <title>Suoni con la tastiera</title>
   <style>
     body {
-      background-color: #222;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
+      background: #222;
       margin: 0;
     }
     .keyboard {
       position: relative;
-      width: 780px;
+      width: 672px;
       height: 200px;
       transform: rotate(180deg);
     }
@@ -22,18 +22,18 @@
       position: absolute;
       bottom: 0;
       border: 1px solid #000;
-      cursor: pointer;
       box-sizing: border-box;
-      user-select: none;
       display: flex;
       justify-content: center;
       align-items: flex-end;
       padding-bottom: 5px;
-      font-family: sans-serif;
       font-size: 12px;
+      font-weight: bold;
+      pointer-events: none;
+      transform: rotate(180deg);
     }
     .white-key {
-      width: 60px;
+      width: 56px;
       height: 200px;
       background: white;
       z-index: 1;
@@ -45,56 +45,35 @@
       color: white;
       z-index: 2;
     }
-    .white-key.active {
-      background: #ccc;
-    }
-    .black-key.active {
-      background: #444;
+    .active {
+      background-color: #4caf50 !important;
     }
   </style>
 </head>
 <body>
   <div class="keyboard" id="keyboard"></div>
   <script>
-    const frequenze = {
-      "Tab": 261.63,  "Q": 293.66,  "W": 329.63,  "E": 370.00,  "R": 415.30,  "T": 466.16,
-      "1": 277.18,  "2": 311.13,  "3": 349.23,  "4": 392.00,  "5": 440.00,  "6": 493.88,
-      "Y": 523.25, "U": 587.33, "I": 659.26, "O": 740.00, "P": 830.61, "[": 932.33,
-      "7": 554.37, "8": 622.25, "9": 698.46, "0": 784.00, "'": 880.00, "ì": 987.77
-    };const noteNomi = {
-  "Tab": "Do", "Q": "Re", "W": "Mi", "E": "Fa", "R": "Sol", "T": "La",
-  "Y": "Si", "U": "Do", "I": "Re", "O": "Mi", "P": "Fa", "[": "Sol",
-  "1": "Do#", "2": "Re#", "3": "Fa#", "4": "Sol#", "5": "La#", "6": "Do#",
-  "7": "Re#", "8": "Fa#", "9": "Sol#", "0": "La#", "'": "Do#", "ì": "Re#"
+    const noteLabels = [
+      "Do", "Re", "Mi", "Fa", "Sol", "La", "Si", "Do'", "Re'", "Mi'", "Fa'", "Sol'"
+    ];
+    const blackNoteLabels = [
+      "Do#", "Re#", "", "Fa#", "Sol#", "La#", "", "Do#'", "Re#'", "", "Fa#'", "Sol#'"
+    ];const whiteKeys = [
+  "Tab", "Q", "W", "E", "R", "T",
+  "Y", "U", "I", "O", "P", "ì"
+];
+
+const blackKeys = [
+  "1", "2", "3", "4", "5", "6",
+  "7", "8", "9", "0", "'", "["
+];
+
+const frequenze = {
+  "Tab": 261.63,  "Q": 293.66,  "W": 329.63,  "E": 370.00,  "R": 415.30,  "T": 466.16,
+  "1": 277.18,  "2": 311.13,  "3": 349.23,  "4": 392.00,  "5": 440.00,  "6": 493.88,
+  "Y": 523.25, "U": 587.33, "I": 659.26, "O": 740.00, "P": 830.61, "ì": 987.77,
+  "7": 554.37, "8": 622.25, "9": 698.46, "0": 784.00, "'": 880.00, "[": 932.33
 };
-
-const tastiBianchi = ["Tab", "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "["];
-const tastiNeri = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "'", "ì"];
-
-tastiBianchi.reverse();
-tastiNeri.reverse();
-
-const keyboard = document.getElementById("keyboard");
-
-tastiBianchi.forEach((key, i) => {
-  const el = document.createElement("div");
-  el.className = "white-key";
-  el.style.left = `${60 * i}px`;
-  el.dataset.key = key;
-  el.textContent = noteNomi[key] || "";
-  keyboard.appendChild(el);
-});
-
-const offsetNeri = [40, 100, 160, 220, 280, 340, 400, 460, 520, 580, 640, 700];
-
-tastiNeri.forEach((key, i) => {
-  const el = document.createElement("div");
-  el.className = "black-key";
-  el.style.left = `${offsetNeri[i]}px`;
-  el.dataset.key = key;
-  el.textContent = noteNomi[key] || "";
-  keyboard.appendChild(el);
-});
 
 let audioContext;
 let masterGain;
@@ -132,6 +111,10 @@ function suonaNota(tasto) {
 
   if (noteAttive[tasto]) return;
 
+  const nAttive = Object.keys(noteAttive).length;
+  const nuovoVolume = 1 / (nAttive + 1);
+  masterGain.gain.setValueAtTime(nuovoVolume, audioContext.currentTime);
+
   const osc = audioContext.createOscillator();
   const gainNode = audioContext.createGain();
 
@@ -145,10 +128,10 @@ function suonaNota(tasto) {
 
   noteAttive[tasto] = { osc, gainNode };
 
-  const el = document.querySelector(`[data-key="${tasto}"]`);
-  if (el) el.classList.add("active");
-
   aggiornaMasterGain();
+
+  const keyElement = document.querySelector(`[data-key="${tasto}"]`);
+  if (keyElement) keyElement.classList.add("active");
 }
 
 function interrompiNota(tasto) {
@@ -163,11 +146,10 @@ function interrompiNota(tasto) {
   nota.osc.stop(now + durataFade);
 
   delete noteAttive[tasto];
-
-  const el = document.querySelector(`[data-key="${tasto}"]`);
-  if (el) el.classList.remove("active");
-
   setTimeout(aggiornaMasterGain, durataFade * 1000);
+
+  const keyElement = document.querySelector(`[data-key="${tasto}"]`);
+  if (keyElement) keyElement.classList.remove("active");
 }
 
 document.addEventListener("keydown", (e) => {
@@ -181,13 +163,28 @@ document.addEventListener("keyup", (e) => {
   interrompiNota(e.key);
 });
 
-document.querySelectorAll('.white-key, .black-key').forEach(el => {
-  el.addEventListener("mousedown", () => suonaNota(el.dataset.key));
-  el.addEventListener("mouseup", () => interrompiNota(el.dataset.key));
-  el.addEventListener("mouseleave", () => interrompiNota(el.dataset.key));
+document.body.addEventListener("click", inizializzaAudio);
+
+const keyboard = document.getElementById("keyboard");
+
+whiteKeys.forEach((key, i) => {
+  const el = document.createElement("div");
+  el.className = "white-key";
+  el.dataset.key = key;
+  el.style.left = `${(i + 1) * 56}px`;
+  el.textContent = noteLabels[i] || "";
+  keyboard.appendChild(el);
 });
 
-document.body.addEventListener("click", inizializzaAudio);
+blackKeys.forEach((key, i) => {
+  if (blackNoteLabels[i] === "") return;
+  const el = document.createElement("div");
+  el.className = "black-key";
+  el.dataset.key = key;
+  el.style.left = `${42 + i * 56}px`;
+  el.textContent = blackNoteLabels[i];
+  keyboard.appendChild(el);
+});
 
   </script>
 </body>
