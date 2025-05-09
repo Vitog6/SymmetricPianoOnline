@@ -4,95 +4,242 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Suoni con la tastiera</title>
- <style>
-  body {
-    background-color: #222;
-    color: white;
-    margin: 0;
-    font-family: sans-serif;
-  }
-
-  .intro {
-    padding: 20px;
-    max-width: 900px;
-  }
-
-  .keyboard-wrapper {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
-
-  .keyboard {
-    position: relative;
-    width: 780px;
-    height: 200px;
-    transform: rotate(180deg);
-  }
-
-  .white-key, .black-key {
-    position: absolute;
-    bottom: 0;
-    border: 1px solid #000;
-    cursor: pointer;
-    box-sizing: border-box;
-    user-select: none;
-    display: flex;
-    justify-content: center;
-    align-items: flex-end;
-    padding-bottom: 5px;
-    font-size: 12px;
-  }
-
-  .white-key {
-    width: 60px;
-    height: 200px;
-    background: white;
-    color: black;
-    z-index: 1;
-  }
-
-  .black-key {
-    width: 40px;
-    height: 120px;
-    background: black;
-    color: white;
-    z-index: 2;
-  }
-
-  .white-key.active {
-    background: #ccc;
-  }
-
-  .black-key.active {
-    background: #444;
-  }
-
-  .key-name {
-    position: absolute;
-    top: 5px;
-    width: 100%;
-    text-align: center;
-    transform: rotate(180deg);
-  }
-</style>
+  <style>
+    body {
+      background-color: #222;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      color: white; /* Impostato per tutto il testo */
+      font-family: sans-serif;
+    }
+    .intro {
+      position: absolute;
+      top: 20px;
+      text-align: center;
+    }
+    .keyboard {
+      position: relative;
+      width: 780px;
+      height: 200px;
+      transform: rotate(180deg);
+    }
+    .white-key, .black-key {
+      position: absolute;
+      bottom: 0;
+      border: 1px solid #000;
+      cursor: pointer;
+      box-sizing: border-box;
+      user-select: none;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+      padding-bottom: 5px;
+      font-family: sans-serif;
+      font-size: 12px;
+    }
+    .white-key {
+      width: 60px;
+      height: 200px;
+      background: white;
+      z-index: 1;
+    }
+    .black-key {
+      width: 40px;
+      height: 120px;
+      background: black;
+      color: white;
+      z-index: 2;
+    }
+    .white-key.active {
+      background: #ccc;
+    }
+    .black-key.active {
+      background: #444;
+    }
+    .key-name {
+      position: absolute;
+      top: 5px;
+      width: 100%;
+      text-align: center;
+      transform: rotate(180deg);
+    }
+  </style>
 </head>
 <body>
   <div class="intro">
     <h1>Benvenuti alla tastiera musicale sperimentale</h1>
-    <p>Questa è una tastiera musicale che emula le note di un pianoforte tradizionale, ma con una disposizione dei tasti completamente diversa...</p>
-    <!-- Testo completo omesso qui per brevità, è lo stesso che già avevi -->
+    <p>Questa è una tastiera musicale che emula le note di un pianoforte tradizionale, ma con una disposizione dei tasti completamente diversa. Ogni tasto corrisponde a una delle 12 note della scala musicale, e le note sono assegnate ai tasti come segue:</p>
+    <ul>
+      <li><strong>Tab</strong>: Do</li>
+      <li><strong>Q</strong>: Re</li>
+      <li><strong>W</strong>: Mi</li>
+      <li><strong>E</strong>: Fa#</li>
+      <li><strong>R</strong>: Sol#</li>
+      <li><strong>T</strong>: La#</li>
+      <li><strong>Y</strong>: Do</li>
+      <li><strong>U</strong>: Re</li>
+      <li><strong>I</strong>: Mi</li>
+      <li><strong>O</strong>: Fa#</li>
+      <li><strong>P</strong>: Sol#</li>
+      <li><strong>è</strong>: La#</li>
+      <li><strong>1</strong>: Do#</li>
+      <li><strong>2</strong>: Re#</li>
+      <li><strong>3</strong>: Fa</li>
+      <li><strong>4</strong>: Sol</li>
+      <li><strong>5</strong>: La</li>
+      <li><strong>6</strong>: Si</li>
+      <li><strong>7</strong>: Do#</li>
+      <li><strong>8</strong>: Re#</li>
+      <li><strong>9</strong>: Fa</li>
+      <li><strong>0</strong>: Sol</li>
+      <li><strong>'</strong>: La</li>
+      <li><strong>ì</strong>: Si</li>
+    </ul>
+    <p>Questa tastiera è un progetto sperimentale che esplora una nuova disposizione dei tasti. Sebbene le note siano le stesse di un piano tradizionale, l'organizzazione dei tasti è completamente differente. In questo nuovo tipo di pianoforte, tutte le dodici note sono suddivise in toni e semitoni, con sei tasti neri e sei bianchi.</p>
+    <p>In questa tastiera, i tasti bianchi sono separati da un tono di distanza l'uno dall'altro, così come i tasti neri. Questa struttura consente di riprodurre qualsiasi brano musicale spostandosi tra i tasti in modo più fluido, permettendo di suonare gli stessi brani ma spostandosi di qualsivoglia numero di semitoni.</p>
+    <p>Questo è un esperimento per esplorare un nuovo tipo di pianoforte che potrebbe un giorno aprire la strada a modi più versatili e creativi di eseguire la musica. Spero che tu possa apprezzare la magnifica regolarità e simmatricità delle dodici note che sono, a mio parere, mal rapresentate dall' attuale disposizione dei tasti nei pianoforti comuni.</p>
+    <p>Il suono non è dei migliori lo so, ma il mio obiettivo era l'idea che spero possa essere apprezzata. Grazie.</p>
   </div>
-
-  <div class="keyboard-wrapper">
-    <div class="keyboard" id="keyboard"></div>
-  </div>
-
-  <!-- Script JS identico a prima -->
+  <div class="keyboard" id="keyboard"></div>
   <script>
-    // Codice JavaScript completo identico alla versione che funzionava
-    // (Lo lascio fuori dal messaggio per evitare di occupare troppo spazio)
+    const frequenze = {
+      "Tab": 261.63,  "Q": 293.66,  "W": 329.63,  "E": 370.00,  "R": 415.30,  "T": 466.16,
+      "1": 277.18,  "2": 311.13,  "3": 349.23,  "4": 392.00,  "5": 440.00,  "6": 493.88,
+      "Y": 523.25, "U": 587.33, "I": 659.26, "O": 740.00, "P": 830.61, "è": 932.33,
+      "7": 554.37, "8": 622.25, "9": 698.46, "0": 784.00, "'": 880.00, "ì": 987.77
+    };
+    const noteBianche = [
+      "Do", "Re", "Mi", "Fa#", "Sol#", "La#", "Do", "Re", "Mi", "Fa#", "Sol#", "La#"
+    ].reverse();
+
+    const noteNere = [
+      "Do#", "Re#", "Fa", "Sol", "La", "Si", "Do#", "Re#", "Fa", "Sol", "La", "Si"
+    ].reverse();
+    const tastiBianchi = ["Tab", "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "["];
+    const tastiNeri = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "'", "ì"];
+
+    tastiBianchi.reverse();
+    tastiNeri.reverse();
+
+    const keyboard = document.getElementById("keyboard");
+
+    // Spostamento dei tasti bianchi verso destra di una posizione e assegnazione del nome delle note
+    tastiBianchi.forEach((key, i) => {
+      const el = document.createElement("div");
+      el.className = "white-key";
+      el.style.left = `${60 * (i + 1)}px`;  // Aggiungi 1 per spostare a destra
+      el.dataset.key = key;
+      el.innerHTML = `<div class="key-name">${noteBianche[i]}</div>`;  // Scrittura nuova della nota
+      keyboard.appendChild(el);
+    });
+
+    const offsetNeri = [40, 100, 160, 220, 280, 340, 400, 460, 520, 580, 640, 700];
+
+    // Assegnazione del nome delle note per i tasti neri
+    tastiNeri.forEach((key, i) => {
+      const el = document.createElement("div");
+      el.className = "black-key";
+      el.style.left = `${offsetNeri[i]}px`;
+      el.dataset.key = key;
+      el.innerHTML = `<div class="key-name">${noteNere[i]}</div>`;  // Scrittura nuova della nota
+      keyboard.appendChild(el);
+    });
+
+    let audioContext;
+    let masterGain;
+    let limiter;
+    const noteAttive = {};
+
+    function inizializzaAudio() {
+      if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+        limiter = audioContext.createDynamicsCompressor();
+        limiter.threshold.setValueAtTime(-1, audioContext.currentTime);
+        limiter.knee.setValueAtTime(0, audioContext.currentTime);
+        limiter.ratio.setValueAtTime(20, audioContext.currentTime);
+        limiter.attack.setValueAtTime(0.001, audioContext.currentTime);
+        limiter.release.setValueAtTime(0.05, audioContext.currentTime);
+
+        masterGain = audioContext.createGain();
+        masterGain.gain.value = 1;
+
+        masterGain.connect(limiter);
+        limiter.connect(audioContext.destination);
+      }
+    }
+
+    function aggiornaMasterGain() {
+      const attive = Object.keys(noteAttive).length;
+      const volumeTotale = attive > 0 ? 1 / attive : 1;
+      masterGain.gain.setValueAtTime(volumeTotale, audioContext.currentTime);
+    }
+
+    function suonaNota(tasto) {
+      if (!frequenze[tasto]) return;
+      inizializzaAudio();
+
+      if (noteAttive[tasto]) return;
+
+      const osc = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
+
+      osc.frequency.setValueAtTime(frequenze[tasto], audioContext.currentTime);
+      osc.type = 'sine';
+
+      gainNode.gain.setValueAtTime(1, audioContext.currentTime);
+
+      osc.connect(gainNode).connect(masterGain);
+      osc.start();
+
+      noteAttive[tasto] = { osc, gainNode };
+
+      const el = document.querySelector(`[data-key="${tasto}"]`);
+      if (el) el.classList.add("active");
+
+      aggiornaMasterGain();
+    }
+
+    function interrompiNota(tasto) {
+      const nota = noteAttive[tasto];
+      if (!nota) return;
+
+      const now = audioContext.currentTime;
+      const durataFade = 0.5;
+
+      nota.gainNode.gain.setValueAtTime(1, now);
+      nota.gainNode.gain.linearRampToValueAtTime(0, now + durataFade);
+      nota.osc.stop(now + durataFade);
+
+      delete noteAttive[tasto];
+
+      const el = document.querySelector(`[data-key="${tasto}"]`);
+      if (el) el.classList.remove("active");
+
+      setTimeout(aggiornaMasterGain, durataFade * 1000);
+    }
+
+    document.addEventListener("keydown", (e) => {
+      if (frequenze[e.key]) {
+        if (e.key === "Tab") e.preventDefault();
+        suonaNota(e.key);
+      }
+    });
+
+    document.addEventListener("keyup", (e) => {
+      interrompiNota(e.key);
+    });
+
+    document.querySelectorAll('.white-key, .black-key').forEach(el => {
+      el.addEventListener("mousedown", () => suonaNota(el.dataset.key));
+      el.addEventListener("mouseup", () => interrompiNota(el.dataset.key));
+      el.addEventListener("mouseleave", () => interrompiNota(el.dataset.key));
+    });
+
+    document.body.addEventListener("click", inizializzaAudio);
   </script>
 </body>
 </html>
