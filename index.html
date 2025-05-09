@@ -4,79 +4,79 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Suoni con la tastiera</title>
-  <style>
-    body {
-      background-color: #222;
-      color: white;
-      margin: 0;
-      font-family: sans-serif;
-    }
+ <style>
+  body {
+    background-color: #222;
+    color: white;
+    margin: 0;
+    font-family: sans-serif;
+  }
 
-    .intro {
-      padding: 20px;
-      max-width: 900px;
-    }
+  .intro {
+    padding: 20px;
+    max-width: 900px;
+  }
 
-    .keyboard-wrapper {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
+  .keyboard-wrapper {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
 
-    .keyboard {
-      position: relative;
-      width: 780px;
-      height: 200px;
-      transform: rotate(180deg);
-    }
+  .keyboard {
+    position: relative;
+    width: 780px;
+    height: 200px;
+    transform: rotate(180deg);
+  }
 
-    .white-key, .black-key {
-      position: absolute;
-      bottom: 0;
-      border: 1px solid #000;
-      cursor: pointer;
-      box-sizing: border-box;
-      user-select: none;
-      display: flex;
-      justify-content: center;
-      align-items: flex-end;
-      padding-bottom: 5px;
-      font-size: 12px;
-    }
+  .white-key, .black-key {
+    position: absolute;
+    bottom: 0;
+    border: 1px solid #000;
+    cursor: pointer;
+    box-sizing: border-box;
+    user-select: none;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    padding-bottom: 5px;
+    font-size: 12px;
+  }
 
-    .white-key {
-      width: 60px;
-      height: 200px;
-      background: white;
-      color: black;
-      z-index: 1;
-    }
+  .white-key {
+    width: 60px;
+    height: 200px;
+    background: white;
+    color: black;
+    z-index: 1;
+  }
 
-    .black-key {
-      width: 40px;
-      height: 120px;
-      background: black;
-      color: white;
-      z-index: 2;
-    }
+  .black-key {
+    width: 40px;
+    height: 120px;
+    background: black;
+    color: white;
+    z-index: 2;
+  }
 
-    .white-key.active {
-      background: #ccc;
-    }
+  .white-key.active {
+    background: #ccc;
+  }
 
-    .black-key.active {
-      background: #444;
-    }
+  .black-key.active {
+    background: #444;
+  }
 
-    .key-name {
-      position: absolute;
-      top: 5px;
-      width: 100%;
-      text-align: center;
-      transform: rotate(180deg);
-    }
-  </style>
+  .key-name {
+    position: absolute;
+    top: 5px;
+    width: 100%;
+    text-align: center;
+    transform: rotate(180deg);
+  }
+</style>
 </head>
 <body>
   <div class="intro">
