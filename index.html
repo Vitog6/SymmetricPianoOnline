@@ -17,6 +17,7 @@
       height: 200px;
       margin: 40px auto;
       user-select: none;
+      transform: rotate(180deg); /* Ribalta il piano */
     }
 
     .key {
@@ -50,19 +51,19 @@
       background: #555;
     }
 
-    /* Posizione tasti bianchi */
-    .white-key:nth-of-type(1)  { left: 0px; }
-    .white-key:nth-of-type(2)  { left: 60px; }
-    .white-key:nth-of-type(3)  { left: 120px; }
-    .white-key:nth-of-type(4)  { left: 180px; }
-    .white-key:nth-of-type(5)  { left: 240px; }
-    .white-key:nth-of-type(6)  { left: 300px; }
-    .white-key:nth-of-type(7)  { left: 360px; }
-    .white-key:nth-of-type(8)  { left: 420px; }
-    .white-key:nth-of-type(9)  { left: 480px; }
-    .white-key:nth-of-type(10) { left: 540px; }
-    .white-key:nth-of-type(11) { left: 600px; }
-    .white-key:nth-of-type(12) { left: 660px; }
+    /* Posizione tasti bianchi (sostituito -1 per spostamento a sinistra) */
+    .white-key:nth-of-type(1)  { left: -60px; }
+    .white-key:nth-of-type(2)  { left: 0px; }
+    .white-key:nth-of-type(3)  { left: 60px; }
+    .white-key:nth-of-type(4)  { left: 120px; }
+    .white-key:nth-of-type(5)  { left: 180px; }
+    .white-key:nth-of-type(6)  { left: 240px; }
+    .white-key:nth-of-type(7)  { left: 300px; }
+    .white-key:nth-of-type(8)  { left: 360px; }
+    .white-key:nth-of-type(9)  { left: 420px; }
+    .white-key:nth-of-type(10) { left: 480px; }
+    .white-key:nth-of-type(11) { left: 540px; }
+    .white-key:nth-of-type(12) { left: 600px; }
 
     /* Posizione tasti neri */
     .black-key[data-key="1"]  { left: 45px; }
@@ -222,7 +223,8 @@
       });
     });
 
-    document.body.addEventListener("click", inizializzaAudio);
+    // Inizializza l'audio al primo click per sbloccare l'audio su browser
+    document.body.addEventListener("click", inizializzaAudio, { once: true });
   </script>
 </body>
 </html>
