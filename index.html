@@ -16,20 +16,27 @@
       width: 720px;
       height: 200px;
       margin: 40px auto;
+      user-select: none;
     }
 
-    .white-key, .black-key {
+    .key {
       position: absolute;
       bottom: 0;
-      border: 1px solid #000;
       box-sizing: border-box;
+      cursor: pointer;
+      transition: background 0.1s;
     }
 
     .white-key {
       width: 60px;
       height: 200px;
       background: white;
+      border: 1px solid #000;
       z-index: 1;
+    }
+
+    .white-key.active {
+      background: #cce5ff;
     }
 
     .black-key {
@@ -39,7 +46,11 @@
       z-index: 2;
     }
 
-    /* Posizioni tasti bianchi */
+    .black-key.active {
+      background: #555;
+    }
+
+    /* Posizione tasti bianchi */
     .white-key:nth-of-type(1)  { left: 0px; }
     .white-key:nth-of-type(2)  { left: 60px; }
     .white-key:nth-of-type(3)  { left: 120px; }
@@ -53,54 +64,61 @@
     .white-key:nth-of-type(11) { left: 600px; }
     .white-key:nth-of-type(12) { left: 660px; }
 
-    /* Posizioni tasti neri (skip alcuni per simulare scala) */
-    .black-key:nth-of-type(13) { left: 45px; }
-    .black-key:nth-of-type(14) { left: 105px; }
-    .black-key:nth-of-type(15) { left: 225px; }
-    .black-key:nth-of-type(16) { left: 285px; }
-    .black-key:nth-of-type(17) { left: 345px; }
-    .black-key:nth-of-type(18) { left: 465px; }
-    .black-key:nth-of-type(19) { left: 525px; }
-    .black-key:nth-of-type(20) { left: 585px; }
-    .black-key:nth-of-type(21) { left: 645px; }
+    /* Posizione tasti neri */
+    .black-key[data-key="1"]  { left: 45px; }
+    .black-key[data-key="2"]  { left: 105px; }
+    .black-key[data-key="3"]  { left: 165px; }
+    .black-key[data-key="4"]  { left: 225px; }
+    .black-key[data-key="5"]  { left: 285px; }
+    .black-key[data-key="6"]  { left: 345px; }
+    .black-key[data-key="7"]  { left: 405px; }
+    .black-key[data-key="8"]  { left: 465px; }
+    .black-key[data-key="9"]  { left: 525px; }
+    .black-key[data-key="0"]  { left: 585px; }
+    .black-key[data-key="'"]  { left: 645px; }
+    .black-key[data-key="ì"]  { left: 705px; }
   </style>
 </head>
 <body>
-  <h1>Premi un tasto per ascoltare la nota</h1>
-  <p>Note: Tab, Q, W, E, R, T, 1, 2, 3, 4, 5, 6, Y, U, I, O, P, [, 7, 8, 9, 0, ', ì</p>
+  <h1>Premi un tasto o clicca per suonare</h1>
+  <p>Note bianche: Tab → Q → W → E → R → T → Y → U → I → O → P → È</p>
+  <p>Note nere: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 0 → ' → ì</p>
 
   <div id="piano">
     <!-- 12 tasti bianchi -->
-    <div class="white-key"></div>
-    <div class="white-key"></div>
-    <div class="white-key"></div>
-    <div class="white-key"></div>
-    <div class="white-key"></div>
-    <div class="white-key"></div>
-    <div class="white-key"></div>
-    <div class="white-key"></div>
-    <div class="white-key"></div>
-    <div class="white-key"></div>
-    <div class="white-key"></div>
-    <div class="white-key"></div>
+    <div class="key white-key" data-key="Tab"></div>
+    <div class="key white-key" data-key="Q"></div>
+    <div class="key white-key" data-key="W"></div>
+    <div class="key white-key" data-key="E"></div>
+    <div class="key white-key" data-key="R"></div>
+    <div class="key white-key" data-key="T"></div>
+    <div class="key white-key" data-key="Y"></div>
+    <div class="key white-key" data-key="U"></div>
+    <div class="key white-key" data-key="I"></div>
+    <div class="key white-key" data-key="O"></div>
+    <div class="key white-key" data-key="P"></div>
+    <div class="key white-key" data-key="È"></div>
 
     <!-- 12 tasti neri -->
-    <div class="black-key"></div>
-    <div class="black-key"></div>
-    <div class="black-key"></div>
-    <div class="black-key"></div>
-    <div class="black-key"></div>
-    <div class="black-key"></div>
-    <div class="black-key"></div>
-    <div class="black-key"></div>
-    <div class="black-key"></div>
+    <div class="key black-key" data-key="1"></div>
+    <div class="key black-key" data-key="2"></div>
+    <div class="key black-key" data-key="3"></div>
+    <div class="key black-key" data-key="4"></div>
+    <div class="key black-key" data-key="5"></div>
+    <div class="key black-key" data-key="6"></div>
+    <div class="key black-key" data-key="7"></div>
+    <div class="key black-key" data-key="8"></div>
+    <div class="key black-key" data-key="9"></div>
+    <div class="key black-key" data-key="0"></div>
+    <div class="key black-key" data-key="'"></div>
+    <div class="key black-key" data-key="ì"></div>
   </div>
 
   <script>
     const frequenze = {
       "Tab": 261.63,  "Q": 293.66,  "W": 329.63,  "E": 370.00,  "R": 415.30,  "T": 466.16,
+      "Y": 523.25, "U": 587.33, "I": 659.26, "O": 740.00, "P": 830.61, "È": 932.33,
       "1": 277.18,  "2": 311.13,  "3": 349.23,  "4": 392.00,  "5": 440.00,  "6": 493.88,
-      "Y": 523.25, "U": 587.33, "I": 659.26, "O": 740.00, "P": 830.61, "[": 932.33,
       "7": 554.37, "8": 622.25, "9": 698.46, "0": 784.00, "'": 880.00, "ì": 987.77
     };
 
@@ -112,7 +130,6 @@
     function inizializzaAudio() {
       if (!audioContext) {
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
-
         limiter = audioContext.createDynamicsCompressor();
         limiter.threshold.setValueAtTime(-1, audioContext.currentTime);
         limiter.knee.setValueAtTime(0, audioContext.currentTime);
@@ -151,13 +168,15 @@
       osc.type = 'sine';
 
       gainNode.gain.setValueAtTime(1, audioContext.currentTime);
-
       osc.connect(gainNode).connect(masterGain);
       osc.start();
 
       noteAttive[tasto] = { osc, gainNode };
 
       aggiornaMasterGain();
+
+      const el = document.querySelector(`.key[data-key="${tasto}"]`);
+      if (el) el.classList.add("active");
     }
 
     function interrompiNota(tasto) {
@@ -173,17 +192,34 @@
 
       delete noteAttive[tasto];
       setTimeout(aggiornaMasterGain, durataFade * 1000);
+
+      const el = document.querySelector(`.key[data-key="${tasto}"]`);
+      if (el) el.classList.remove("active");
     }
 
     document.addEventListener("keydown", (e) => {
-      if (frequenze[e.key]) {
-        if (e.key === "Tab") e.preventDefault();
-        suonaNota(e.key);
+      const key = e.key === "[" ? "È" : e.key;
+      if (frequenze[key]) {
+        if (key === "Tab") e.preventDefault();
+        suonaNota(key);
       }
     });
 
     document.addEventListener("keyup", (e) => {
-      interrompiNota(e.key);
+      const key = e.key === "[" ? "È" : e.key;
+      interrompiNota(key);
+    });
+
+    document.querySelectorAll(".key").forEach(el => {
+      el.addEventListener("mousedown", () => {
+        suonaNota(el.dataset.key);
+      });
+      el.addEventListener("mouseup", () => {
+        interrompiNota(el.dataset.key);
+      });
+      el.addEventListener("mouseleave", () => {
+        interrompiNota(el.dataset.key);
+      });
     });
 
     document.body.addEventListener("click", inizializzaAudio);
