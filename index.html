@@ -1,40 +1,39 @@
-<!DOCTYPE html>
-<html lang="it">
+<!DOCTYPE html><html lang="it">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Suoni con la tastiera</title>
   <style>
     body {
+      background-color: #222;
       display: flex;
       justify-content: center;
       align-items: center;
       height: 100vh;
-      background: #222;
       margin: 0;
     }
     .keyboard {
       position: relative;
-      width: 672px;
+      width: 780px;
       height: 200px;
-      transform: rotate(180deg); /* Capovolgimento della tastiera */
+      transform: rotate(180deg);
     }
     .white-key, .black-key {
       position: absolute;
       bottom: 0;
       border: 1px solid #000;
+      cursor: pointer;
       box-sizing: border-box;
+      user-select: none;
       display: flex;
       justify-content: center;
       align-items: flex-end;
       padding-bottom: 5px;
+      font-family: sans-serif;
       font-size: 12px;
-      font-weight: bold;
-      pointer-events: none;
-      transform: rotate(180deg);
     }
     .white-key {
-      width: 56px;
+      width: 60px;
       height: 200px;
       background: white;
       z-index: 1;
@@ -46,164 +45,150 @@
       color: white;
       z-index: 2;
     }
-    .active {
-      background-color: #4caf50 !important;
+    .white-key.active {
+      background: #ccc;
     }
-    .key-label {
-      position: absolute;
-      bottom: 10px;
-      font-size: 14px;
-      font-weight: bold;
-      color: #000;
+    .black-key.active {
+      background: #444;
     }
   </style>
 </head>
 <body>
   <div class="keyboard" id="keyboard"></div>
   <script>
-    const noteLabels = [
-      "Do", "Re", "Mi", "Fa", "Sol", "La", "Si", "Do'", "Re'", "Mi'", "Fa'", "Sol'"
-    ];
-    const blackNoteLabels = [
-      "Do#", "Re#", "", "Fa#", "Sol#", "La#", "", "Do#'", "Re#'", "", "Fa#'", "Sol#'"
-    ];
-
-    const whiteKeys = [
-      "Tab", "Q", "W", "E", "R", "T",
-      "Y", "U", "I", "O", "P", "ì"
-    ];
-
-    const blackKeys = [
-      "1", "2", "3", "4", "5", "6",
-      "7", "8", "9", "0", "'", "["
-    ];
-
     const frequenze = {
       "Tab": 261.63,  "Q": 293.66,  "W": 329.63,  "E": 370.00,  "R": 415.30,  "T": 466.16,
       "1": 277.18,  "2": 311.13,  "3": 349.23,  "4": 392.00,  "5": 440.00,  "6": 493.88,
       "Y": 523.25, "U": 587.33, "I": 659.26, "O": 740.00, "P": 830.61, "[": 932.33,
       "7": 554.37, "8": 622.25, "9": 698.46, "0": 784.00, "'": 880.00, "ì": 987.77
-    };
+    };const noteNomi = {
+  "Tab": "Do", "Q": "Re", "W": "Mi", "E": "Fa", "R": "Sol", "T": "La",
+  "Y": "Si", "U": "Do", "I": "Re", "O": "Mi", "P": "Fa", "[": "Sol",
+  "1": "Do#", "2": "Re#", "3": "Fa#", "4": "Sol#", "5": "La#", "6": "Do#",
+  "7": "Re#", "8": "Fa#", "9": "Sol#", "0": "La#", "'": "Do#", "ì": "Re#"
+};
 
-    const noteAttive = {};
+const tastiBianchi = ["Tab", "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "["];
+const tastiNeri = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "'", "ì"];
 
-    function inizializzaAudio() {
-      if (!audioContext) {
-        audioContext = new (window.AudioContext || window.webkitAudioContext)();
+tastiBianchi.reverse();
+tastiNeri.reverse();
 
-        limiter = audioContext.createDynamicsCompressor();
-        limiter.threshold.setValueAtTime(-1, audioContext.currentTime); // soglia
-        limiter.knee.setValueAtTime(0, audioContext.currentTime);       // transizione netta
-        limiter.ratio.setValueAtTime(20, audioContext.currentTime);     // compressione forte
-        limiter.attack.setValueAtTime(0.001, audioContext.currentTime); // attacco rapido
-        limiter.release.setValueAtTime(0.05, audioContext.currentTime); // rilascio rapido
+const keyboard = document.getElementById("keyboard");
 
-        masterGain = audioContext.createGain();
-        masterGain.gain.value = 1;
+tastiBianchi.forEach((key, i) => {
+  const el = document.createElement("div");
+  el.className = "white-key";
+  el.style.left = `${60 * i}px`;
+  el.dataset.key = key;
+  el.textContent = noteNomi[key] || "";
+  keyboard.appendChild(el);
+});
 
-        masterGain.connect(limiter);
-        limiter.connect(audioContext.destination);
-      }
-    }
+const offsetNeri = [40, 100, 160, 220, 280, 340, 400, 460, 520, 580, 640, 700];
 
-    function aggiornaMasterGain() {
-      const attive = Object.keys(noteAttive).length;
-      const volumeTotale = attive > 0 ? 1 / attive : 1;
-      masterGain.gain.setValueAtTime(volumeTotale, audioContext.currentTime);
-    }
+tastiNeri.forEach((key, i) => {
+  const el = document.createElement("div");
+  el.className = "black-key";
+  el.style.left = `${offsetNeri[i]}px`;
+  el.dataset.key = key;
+  el.textContent = noteNomi[key] || "";
+  keyboard.appendChild(el);
+});
 
-    function suonaNota(tasto) {
-      if (!frequenze[tasto]) return;
-      inizializzaAudio();
+let audioContext;
+let masterGain;
+let limiter;
+const noteAttive = {};
 
-      if (noteAttive[tasto]) return;
+function inizializzaAudio() {
+  if (!audioContext) {
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
-      const nAttive = Object.keys(noteAttive).length;
-      const nuovoVolume = 1 / (nAttive + 1);
-      masterGain.gain.setValueAtTime(nuovoVolume, audioContext.currentTime);
+    limiter = audioContext.createDynamicsCompressor();
+    limiter.threshold.setValueAtTime(-1, audioContext.currentTime);
+    limiter.knee.setValueAtTime(0, audioContext.currentTime);
+    limiter.ratio.setValueAtTime(20, audioContext.currentTime);
+    limiter.attack.setValueAtTime(0.001, audioContext.currentTime);
+    limiter.release.setValueAtTime(0.05, audioContext.currentTime);
 
-      const osc = audioContext.createOscillator();
-      const gainNode = audioContext.createGain();
+    masterGain = audioContext.createGain();
+    masterGain.gain.value = 1;
 
-      osc.frequency.setValueAtTime(frequenze[tasto], audioContext.currentTime);
-      osc.type = 'sine';
+    masterGain.connect(limiter);
+    limiter.connect(audioContext.destination);
+  }
+}
 
-      gainNode.gain.setValueAtTime(1, audioContext.currentTime);
+function aggiornaMasterGain() {
+  const attive = Object.keys(noteAttive).length;
+  const volumeTotale = attive > 0 ? 1 / attive : 1;
+  masterGain.gain.setValueAtTime(volumeTotale, audioContext.currentTime);
+}
 
-      osc.connect(gainNode).connect(masterGain);
-      osc.start();
+function suonaNota(tasto) {
+  if (!frequenze[tasto]) return;
+  inizializzaAudio();
 
-      noteAttive[tasto] = { osc, gainNode };
+  if (noteAttive[tasto]) return;
 
-      aggiornaMasterGain();
-    }
+  const osc = audioContext.createOscillator();
+  const gainNode = audioContext.createGain();
 
-    function interrompiNota(tasto) {
-      const nota = noteAttive[tasto];
-      if (!nota) return;
+  osc.frequency.setValueAtTime(frequenze[tasto], audioContext.currentTime);
+  osc.type = 'sine';
 
-      const now = audioContext.currentTime;
-      const durataFade = 0.5;
+  gainNode.gain.setValueAtTime(1, audioContext.currentTime);
 
-      nota.gainNode.gain.setValueAtTime(1, now);
-      nota.gainNode.gain.linearRampToValueAtTime(0, now + durataFade);
-      nota.osc.stop(now + durataFade);
+  osc.connect(gainNode).connect(masterGain);
+  osc.start();
 
-      delete noteAttive[tasto];
-      setTimeout(aggiornaMasterGain, durataFade * 1000);
-    }
+  noteAttive[tasto] = { osc, gainNode };
 
-    document.addEventListener("keydown", (e) => {
-      if (frequenze[e.key]) {
-        if (e.key === "Tab") e.preventDefault();
-        suonaNota(e.key);
-      }
-    });
+  const el = document.querySelector(`[data-key="${tasto}"]`);
+  if (el) el.classList.add("active");
 
-    document.addEventListener("keyup", (e) => {
-      interrompiNota(e.key);
-    });
+  aggiornaMasterGain();
+}
 
-    document.body.addEventListener("click", inizializzaAudio);
+function interrompiNota(tasto) {
+  const nota = noteAttive[tasto];
+  if (!nota) return;
 
-    // Costruzione della tastiera
-    const keyboardElement = document.getElementById('keyboard');
+  const now = audioContext.currentTime;
+  const durataFade = 0.5;
 
-    // Posizioni dei tasti bianchi
-    const whiteKeyPositions = [
-      60, 116, 172, 228, 284, 340, 396, 452, 508, 564, 620, 676
-    ];
+  nota.gainNode.gain.setValueAtTime(1, now);
+  nota.gainNode.gain.linearRampToValueAtTime(0, now + durataFade);
+  nota.osc.stop(now + durataFade);
 
-    whiteKeys.forEach((key, index) => {
-      const whiteKey = document.createElement('div');
-      whiteKey.classList.add('white-key');
-      whiteKey.style.left = `${whiteKeyPositions[index]}px`;
+  delete noteAttive[tasto];
 
-      const keyLabel = document.createElement('div');
-      keyLabel.classList.add('key-label');
-      keyLabel.innerText = noteLabels[index];
-      whiteKey.appendChild(keyLabel);
-      
-      keyboardElement.appendChild(whiteKey);
-    });
+  const el = document.querySelector(`[data-key="${tasto}"]`);
+  if (el) el.classList.remove("active");
 
-    // Posizioni dei tasti neri
-    const blackKeyPositions = [
-      90, 146, 202, 258, 314, 370, 426, 482, 538, 594, 650
-    ];
+  setTimeout(aggiornaMasterGain, durataFade * 1000);
+}
 
-    blackKeys.forEach((key, index) => {
-      const blackKey = document.createElement('div');
-      blackKey.classList.add('black-key');
-      blackKey.style.left = `${blackKeyPositions[index]}px`;
+document.addEventListener("keydown", (e) => {
+  if (frequenze[e.key]) {
+    if (e.key === "Tab") e.preventDefault();
+    suonaNota(e.key);
+  }
+});
 
-      const keyLabel = document.createElement('div');
-      keyLabel.classList.add('key-label');
-      keyLabel.innerText = blackNoteLabels[index];
-      blackKey.appendChild(keyLabel);
-      
-      keyboardElement.appendChild(blackKey);
-    });
+document.addEventListener("keyup", (e) => {
+  interrompiNota(e.key);
+});
+
+document.querySelectorAll('.white-key, .black-key').forEach(el => {
+  el.addEventListener("mousedown", () => suonaNota(el.dataset.key));
+  el.addEventListener("mouseup", () => interrompiNota(el.dataset.key));
+  el.addEventListener("mouseleave", () => interrompiNota(el.dataset.key));
+});
+
+document.body.addEventListener("click", inizializzaAudio);
+
   </script>
 </body>
 </html>
