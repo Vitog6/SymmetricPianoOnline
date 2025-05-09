@@ -2,125 +2,91 @@
 <html lang="it">
 <head>
   <meta charset="UTF-8">
+  <title>Pianoforte Dritto</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Suoni con la tastiera</title>
   <style>
     body {
-      font-family: sans-serif;
-      text-align: center;
-      padding: 20px;
+      background: #222;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
     }
-
-    #piano {
+    .keyboard {
       position: relative;
-      width: 720px;
+      width: 780px;
       height: 200px;
-      margin: 40px auto;
-      user-select: none;
-      transform: rotate(180deg); /* Ribalta il piano */
     }
-
-    .key {
+    .white-key, .black-key {
       position: absolute;
       bottom: 0;
-      box-sizing: border-box;
+      border: 1px solid #000;
       cursor: pointer;
-      transition: background 0.1s;
+      box-sizing: border-box;
+      user-select: none;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      font-size: 10px;
+      font-family: sans-serif;
     }
-
     .white-key {
       width: 60px;
       height: 200px;
       background: white;
-      border: 1px solid #000;
       z-index: 1;
     }
-
-    .white-key.active {
-      background: #cce5ff;
-    }
-
     .black-key {
       width: 40px;
       height: 120px;
       background: black;
       z-index: 2;
+      color: white;
     }
-
+    .white-key.active {
+      background: #ccc;
+    }
     .black-key.active {
-      background: #555;
+      background: #444;
     }
-
-    /* Posizione tasti bianchi (sostituito -1 per spostamento a sinistra) */
-.white-key:nth-of-type(1)  { left: 60px; }
-.white-key:nth-of-type(2)  { left: 120px; }
-.white-key:nth-of-type(3)  { left: 180px; }
-.white-key:nth-of-type(4)  { left: 240px; }
-.white-key:nth-of-type(5)  { left: 300px; }
-.white-key:nth-of-type(6)  { left: 360px; }
-.white-key:nth-of-type(7)  { left: 420px; }
-.white-key:nth-of-type(8)  { left: 480px; }
-.white-key:nth-of-type(9)  { left: 540px; }
-.white-key:nth-of-type(10) { left: 600px; }
-.white-key:nth-of-type(11) { left: 660px; }
-.white-key:nth-of-type(12) { left: 720px; }
-    /* Posizione tasti neri */
-    .black-key[data-key="1"]  { left: 45px; }
-    .black-key[data-key="2"]  { left: 105px; }
-    .black-key[data-key="3"]  { left: 165px; }
-    .black-key[data-key="4"]  { left: 225px; }
-    .black-key[data-key="5"]  { left: 285px; }
-    .black-key[data-key="6"]  { left: 345px; }
-    .black-key[data-key="7"]  { left: 405px; }
-    .black-key[data-key="8"]  { left: 465px; }
-    .black-key[data-key="9"]  { left: 525px; }
-    .black-key[data-key="0"]  { left: 585px; }
-    .black-key[data-key="'"]  { left: 645px; }
-    .black-key[data-key="ì"]  { left: 705px; }
   </style>
 </head>
 <body>
-  <h1>Premi un tasto o clicca per suonare</h1>
-  <p>Note bianche: Tab → Q → W → E → R → T → Y → U → I → O → P → È</p>
-  <p>Note nere: 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8 → 9 → 0 → ' → ì</p>
-
-  <div id="piano">
-    <!-- 12 tasti bianchi -->
-    <div class="key white-key" data-key="Tab"></div>
-    <div class="key white-key" data-key="Q"></div>
-    <div class="key white-key" data-key="W"></div>
-    <div class="key white-key" data-key="E"></div>
-    <div class="key white-key" data-key="R"></div>
-    <div class="key white-key" data-key="T"></div>
-    <div class="key white-key" data-key="Y"></div>
-    <div class="key white-key" data-key="U"></div>
-    <div class="key white-key" data-key="I"></div>
-    <div class="key white-key" data-key="O"></div>
-    <div class="key white-key" data-key="P"></div>
-    <div class="key white-key" data-key="È"></div>
-
-    <!-- 12 tasti neri -->
-    <div class="key black-key" data-key="1"></div>
-    <div class="key black-key" data-key="2"></div>
-    <div class="key black-key" data-key="3"></div>
-    <div class="key black-key" data-key="4"></div>
-    <div class="key black-key" data-key="5"></div>
-    <div class="key black-key" data-key="6"></div>
-    <div class="key black-key" data-key="7"></div>
-    <div class="key black-key" data-key="8"></div>
-    <div class="key black-key" data-key="9"></div>
-    <div class="key black-key" data-key="0"></div>
-    <div class="key black-key" data-key="'"></div>
-    <div class="key black-key" data-key="ì"></div>
-  </div>
+  <div class="keyboard" id="keyboard"></div>
 
   <script>
     const frequenze = {
       "Tab": 261.63,  "Q": 293.66,  "W": 329.63,  "E": 370.00,  "R": 415.30,  "T": 466.16,
-      "Y": 523.25, "U": 587.33, "I": 659.26, "O": 740.00, "P": 830.61, "È": 932.33,
       "1": 277.18,  "2": 311.13,  "3": 349.23,  "4": 392.00,  "5": 440.00,  "6": 493.88,
+      "Y": 523.25, "U": 587.33, "I": 659.26, "O": 740.00, "P": 830.61, "È": 932.33,
       "7": 554.37, "8": 622.25, "9": 698.46, "0": 784.00, "'": 880.00, "ì": 987.77
     };
+
+    const whiteKeys = ["Tab", "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "È"];
+    const blackKeys = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "'", "ì"];
+
+    const keyboard = document.getElementById("keyboard");
+
+    whiteKeys.forEach((key, i) => {
+      const el = document.createElement("div");
+      el.className = "white-key";
+      el.style.left = `${i * 60}px`;
+      el.dataset.key = key;
+      el.textContent = key;
+      keyboard.appendChild(el);
+    });
+
+    const blackOffsets = [40, 100, 220, 280, 340, 460, 520, 580, 640, 700, 760, 820];
+
+    blackKeys.forEach((key, i) => {
+      const el = document.createElement("div");
+      el.className = "black-key";
+      el.style.left = `${blackOffsets[i]}px`;
+      el.dataset.key = key;
+      el.textContent = key;
+      keyboard.appendChild(el);
+    });
 
     let audioContext;
     let masterGain;
@@ -130,6 +96,7 @@
     function inizializzaAudio() {
       if (!audioContext) {
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
         limiter = audioContext.createDynamicsCompressor();
         limiter.threshold.setValueAtTime(-1, audioContext.currentTime);
         limiter.knee.setValueAtTime(0, audioContext.currentTime);
@@ -157,10 +124,6 @@
 
       if (noteAttive[tasto]) return;
 
-      const nAttive = Object.keys(noteAttive).length;
-      const nuovoVolume = 1 / (nAttive + 1);
-      masterGain.gain.setValueAtTime(nuovoVolume, audioContext.currentTime);
-
       const osc = audioContext.createOscillator();
       const gainNode = audioContext.createGain();
 
@@ -168,15 +131,16 @@
       osc.type = 'sine';
 
       gainNode.gain.setValueAtTime(1, audioContext.currentTime);
+
       osc.connect(gainNode).connect(masterGain);
       osc.start();
 
       noteAttive[tasto] = { osc, gainNode };
 
-      aggiornaMasterGain();
+      const keyEl = document.querySelector(`[data-key="${tasto}"]`);
+      if (keyEl) keyEl.classList.add("active");
 
-      const el = document.querySelector(`.key[data-key="${tasto}"]`);
-      if (el) el.classList.add("active");
+      aggiornaMasterGain();
     }
 
     function interrompiNota(tasto) {
@@ -193,36 +157,27 @@
       delete noteAttive[tasto];
       setTimeout(aggiornaMasterGain, durataFade * 1000);
 
-      const el = document.querySelector(`.key[data-key="${tasto}"]`);
-      if (el) el.classList.remove("active");
+      const keyEl = document.querySelector(`[data-key="${tasto}"]`);
+      if (keyEl) keyEl.classList.remove("active");
     }
 
     document.addEventListener("keydown", (e) => {
-      const key = e.key === "[" ? "È" : e.key;
-      if (frequenze[key]) {
-        if (key === "Tab") e.preventDefault();
-        suonaNota(key);
+      if (frequenze[e.key]) {
+        if (e.key === "Tab") e.preventDefault();
+        suonaNota(e.key);
       }
     });
 
     document.addEventListener("keyup", (e) => {
-      const key = e.key === "[" ? "È" : e.key;
-      interrompiNota(key);
+      interrompiNota(e.key);
     });
 
-    document.querySelectorAll(".key").forEach(el => {
-      el.addEventListener("mousedown", () => {
-        suonaNota(el.dataset.key);
-      });
-      el.addEventListener("mouseup", () => {
-        interrompiNota(el.dataset.key);
-      });
-      el.addEventListener("mouseleave", () => {
-        interrompiNota(el.dataset.key);
-      });
+    document.querySelectorAll(".white-key, .black-key").forEach(el => {
+      el.addEventListener("mousedown", () => suonaNota(el.dataset.key));
+      el.addEventListener("mouseup", () => interrompiNota(el.dataset.key));
+      el.addEventListener("mouseleave", () => interrompiNota(el.dataset.key));
     });
 
-    // Inizializza l'audio al primo click per sbloccare l'audio su browser
     document.body.addEventListener("click", inizializzaAudio, { once: true });
   </script>
 </body>
