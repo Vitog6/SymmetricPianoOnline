@@ -5,104 +5,95 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Suoni con la tastiera</title>
   <style>
-    /* Stile per la tastiera */
-    .tastiera {
-      display: flex;
-      justify-content: center;
-      margin-top: 30px;
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      padding: 20px;
     }
 
-    .tasto {
-      width: 40px;
-      height: 150px;
-      background-color: white;
-      border: 1px solid black;
-      margin: 0 2px;
+    #piano {
       position: relative;
-      transition: background-color 0.2s;
+      width: 720px;
+      height: 200px;
+      margin: 40px auto;
     }
 
-    .tasto.nero {
-      width: 30px;
-      height: 100px;
-      background-color: black;
+    .white-key, .black-key {
       position: absolute;
-      top: 0;
-      left: 30px;
+      bottom: 0;
+      border: 1px solid #000;
+      box-sizing: border-box;
+    }
+
+    .white-key {
+      width: 60px;
+      height: 200px;
+      background: white;
       z-index: 1;
-      margin-left: -15px;
-      margin-right: -15px;
     }
 
-    .tasto:active,
-    .tasto.illuminato {
-      background-color: yellow;
-    }
-
-    /* Stile per la disposizione della tastiera */
-    .tasti-bianchi {
-      display: flex;
-      align-items: center;
-    }
-
-    .tasti-neri {
-      display: flex;
-      position: absolute;
-      margin-left: 40px;
-      margin-top: -100px;
-      justify-content: space-between;
-      width: 480px;
-    }
-
-    .tasti-neri .tasto {
+    .black-key {
+      width: 40px;
+      height: 120px;
+      background: black;
       z-index: 2;
     }
+
+    /* Posizioni tasti bianchi */
+    .white-key:nth-of-type(1)  { left: 0px; }
+    .white-key:nth-of-type(2)  { left: 60px; }
+    .white-key:nth-of-type(3)  { left: 120px; }
+    .white-key:nth-of-type(4)  { left: 180px; }
+    .white-key:nth-of-type(5)  { left: 240px; }
+    .white-key:nth-of-type(6)  { left: 300px; }
+    .white-key:nth-of-type(7)  { left: 360px; }
+    .white-key:nth-of-type(8)  { left: 420px; }
+    .white-key:nth-of-type(9)  { left: 480px; }
+    .white-key:nth-of-type(10) { left: 540px; }
+    .white-key:nth-of-type(11) { left: 600px; }
+    .white-key:nth-of-type(12) { left: 660px; }
+
+    /* Posizioni tasti neri (skip alcuni per simulare scala) */
+    .black-key:nth-of-type(13) { left: 45px; }
+    .black-key:nth-of-type(14) { left: 105px; }
+    .black-key:nth-of-type(15) { left: 225px; }
+    .black-key:nth-of-type(16) { left: 285px; }
+    .black-key:nth-of-type(17) { left: 345px; }
+    .black-key:nth-of-type(18) { left: 465px; }
+    .black-key:nth-of-type(19) { left: 525px; }
+    .black-key:nth-of-type(20) { left: 585px; }
+    .black-key:nth-of-type(21) { left: 645px; }
   </style>
 </head>
 <body>
   <h1>Premi un tasto per ascoltare la nota</h1>
   <p>Note: Tab, Q, W, E, R, T, 1, 2, 3, 4, 5, 6, Y, U, I, O, P, [, 7, 8, 9, 0, ', ì</p>
 
-  <div class="tastiera">
-    <div class="tasti-bianchi">
-      <div class="tasto" id="tab"></div>
-      <div class="tasto" id="q"></div>
-      <div class="tasto" id="w"></div>
-      <div class="tasto" id="e"></div>
-      <div class="tasto" id="r"></div>
-      <div class="tasto" id="t"></div>
-      <div class="tasto" id="1"></div>
-      <div class="tasto" id="2"></div>
-      <div class="tasto" id="3"></div>
-      <div class="tasto" id="4"></div>
-      <div class="tasto" id="5"></div>
-      <div class="tasto" id="6"></div>
-      <div class="tasto" id="y"></div>
-      <div class="tasto" id="u"></div>
-      <div class="tasto" id="i"></div>
-      <div class="tasto" id="o"></div>
-      <div class="tasto" id="p"></div>
-      <div class="tasto" id="["></div>
-      <div class="tasto" id="7"></div>
-      <div class="tasto" id="8"></div>
-      <div class="tasto" id="9"></div>
-      <div class="tasto" id="0"></div>
-      <div class="tasto" id="'"></div>
-      <div class="tasto" id="ì"></div>
-    </div>
-    <div class="tasti-neri">
-      <div class="tasto nero" id="q-#"></div>
-      <div class="tasto nero" id="w-#"></div>
-      <div class="tasto nero" id="r-#"></div>
-      <div class="tasto nero" id="t-#"></div>
-      <div class="tasto nero" id="2-#"></div>
-      <div class="tasto nero" id="3-#"></div>
-      <div class="tasto nero" id="5-#"></div>
-      <div class="tasto nero" id="6-#"></div>
-      <div class="tasto nero" id="7-#"></div>
-      <div class="tasto nero" id="8-#"></div>
-      <div class="tasto nero" id="9-#"></div>
-    </div>
+  <div id="piano">
+    <!-- 12 tasti bianchi -->
+    <div class="white-key"></div>
+    <div class="white-key"></div>
+    <div class="white-key"></div>
+    <div class="white-key"></div>
+    <div class="white-key"></div>
+    <div class="white-key"></div>
+    <div class="white-key"></div>
+    <div class="white-key"></div>
+    <div class="white-key"></div>
+    <div class="white-key"></div>
+    <div class="white-key"></div>
+    <div class="white-key"></div>
+
+    <!-- 12 tasti neri -->
+    <div class="black-key"></div>
+    <div class="black-key"></div>
+    <div class="black-key"></div>
+    <div class="black-key"></div>
+    <div class="black-key"></div>
+    <div class="black-key"></div>
+    <div class="black-key"></div>
+    <div class="black-key"></div>
+    <div class="black-key"></div>
   </div>
 
   <script>
@@ -115,14 +106,25 @@
 
     let audioContext;
     let masterGain;
+    let limiter;
     const noteAttive = {};
 
     function inizializzaAudio() {
       if (!audioContext) {
         audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+        limiter = audioContext.createDynamicsCompressor();
+        limiter.threshold.setValueAtTime(-1, audioContext.currentTime);
+        limiter.knee.setValueAtTime(0, audioContext.currentTime);
+        limiter.ratio.setValueAtTime(20, audioContext.currentTime);
+        limiter.attack.setValueAtTime(0.001, audioContext.currentTime);
+        limiter.release.setValueAtTime(0.05, audioContext.currentTime);
+
         masterGain = audioContext.createGain();
         masterGain.gain.value = 1;
-        masterGain.connect(audioContext.destination);
+
+        masterGain.connect(limiter);
+        limiter.connect(audioContext.destination);
       }
     }
 
@@ -136,10 +138,8 @@
       if (!frequenze[tasto]) return;
       inizializzaAudio();
 
-      // Se già attiva, ignora
       if (noteAttive[tasto]) return;
 
-      // Calcola nuovo gain prima di aggiungere la nota
       const nAttive = Object.keys(noteAttive).length;
       const nuovoVolume = 1 / (nAttive + 1);
       masterGain.gain.setValueAtTime(nuovoVolume, audioContext.currentTime);
@@ -150,7 +150,6 @@
       osc.frequency.setValueAtTime(frequenze[tasto], audioContext.currentTime);
       osc.type = 'sine';
 
-      // Nessun fade-in: volume subito attivo
       gainNode.gain.setValueAtTime(1, audioContext.currentTime);
 
       osc.connect(gainNode).connect(masterGain);
@@ -159,9 +158,6 @@
       noteAttive[tasto] = { osc, gainNode };
 
       aggiornaMasterGain();
-
-      // Aggiungi illuminazione tasto
-      illuminaTasto(tasto);
     }
 
     function interrompiNota(tasto) {
@@ -177,23 +173,6 @@
 
       delete noteAttive[tasto];
       setTimeout(aggiornaMasterGain, durataFade * 1000);
-
-      // Rimuovi illuminazione tasto
-      spegniTasto(tasto);
-    }
-
-    function illuminaTasto(tasto) {
-      const tastoElement = document.getElementById(tasto);
-      if (tastoElement) {
-        tastoElement.classList.add('illuminato');
-      }
-    }
-
-    function spegniTasto(tasto) {
-      const tastoElement = document.getElementById(tasto);
-      if (tastoElement) {
-        tastoElement.classList.remove('illuminato');
-      }
     }
 
     document.addEventListener("keydown", (e) => {
