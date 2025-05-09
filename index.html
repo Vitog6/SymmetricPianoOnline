@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="it">
+<!DOCTYPE html>
+<html lang="it">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -51,6 +52,13 @@
     .black-key.active {
       background: #444;
     }
+    .key-name {
+      position: absolute;
+      top: 5px;
+      width: 100%;
+      text-align: center;
+      transform: rotate(180deg);
+    }
   </style>
 </head>
 <body>
@@ -61,134 +69,135 @@
       "1": 277.18,  "2": 311.13,  "3": 349.23,  "4": 392.00,  "5": 440.00,  "6": 493.88,
       "Y": 523.25, "U": 587.33, "I": 659.26, "O": 740.00, "P": 830.61, "[": 932.33,
       "7": 554.37, "8": 622.25, "9": 698.46, "0": 784.00, "'": 880.00, "ì": 987.77
-    };const noteNomi = {
-  "Tab": "Do", "Q": "Re", "W": "Mi", "E": "Fa", "R": "Sol", "T": "La",
-  "Y": "Si", "U": "Do", "I": "Re", "O": "Mi", "P": "Fa", "[": "Sol",
-  "1": "Do#", "2": "Re#", "3": "Fa#", "4": "Sol#", "5": "La#", "6": "Do#",
-  "7": "Re#", "8": "Fa#", "9": "Sol#", "0": "La#", "'": "Do#", "ì": "Re#"
-};
+    };
+    const noteNomi = {
+      "Tab": "Do", "Q": "Re", "W": "Mi", "E": "Fa", "R": "Sol", "T": "La",
+      "Y": "Si", "U": "Do", "I": "Re", "O": "Mi", "P": "Fa", "[": "Sol",
+      "1": "Do#", "2": "Re#", "3": "Fa#", "4": "Sol#", "5": "La#", "6": "Do#",
+      "7": "Re#", "8": "Fa#", "9": "Sol#", "0": "La#", "'": "Do#", "ì": "Re#"
+    };
 
-const tastiBianchi = ["Tab", "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "["];
-const tastiNeri = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "'", "ì"];
+    const tastiBianchi = ["Tab", "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "["];
+    const tastiNeri = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "'", "ì"];
 
-tastiBianchi.reverse();
-tastiNeri.reverse();
+    tastiBianchi.reverse();
+    tastiNeri.reverse();
 
-const keyboard = document.getElementById("keyboard");
+    const keyboard = document.getElementById("keyboard");
 
-tastiBianchi.forEach((key, i) => {
-  const el = document.createElement("div");
-  el.className = "white-key";
-  el.style.left = `${60 * i}px`;
-  el.dataset.key = key;
-  el.textContent = noteNomi[key] || "";
-  keyboard.appendChild(el);
-});
+    // Spostamento dei tasti bianchi verso destra di una posizione
+    tastiBianchi.forEach((key, i) => {
+      const el = document.createElement("div");
+      el.className = "white-key";
+      el.style.left = `${60 * (i + 1)}px`;  // Aggiungi 1 per spostare a destra
+      el.dataset.key = key;
+      el.innerHTML = `<div class="key-name">${noteNomi[key] || ""}</div>`;  // Posiziona il nome nella parte superiore
+      keyboard.appendChild(el);
+    });
 
-const offsetNeri = [40, 100, 160, 220, 280, 340, 400, 460, 520, 580, 640, 700];
+    const offsetNeri = [40, 100, 160, 220, 280, 340, 400, 460, 520, 580, 640, 700];
 
-tastiNeri.forEach((key, i) => {
-  const el = document.createElement("div");
-  el.className = "black-key";
-  el.style.left = `${offsetNeri[i]}px`;
-  el.dataset.key = key;
-  el.textContent = noteNomi[key] || "";
-  keyboard.appendChild(el);
-});
+    tastiNeri.forEach((key, i) => {
+      const el = document.createElement("div");
+      el.className = "black-key";
+      el.style.left = `${offsetNeri[i]}px`;
+      el.dataset.key = key;
+      el.innerHTML = `<div class="key-name">${noteNomi[key] || ""}</div>`;  // Posiziona il nome nella parte superiore
+      keyboard.appendChild(el);
+    });
 
-let audioContext;
-let masterGain;
-let limiter;
-const noteAttive = {};
+    let audioContext;
+    let masterGain;
+    let limiter;
+    const noteAttive = {};
 
-function inizializzaAudio() {
-  if (!audioContext) {
-    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+    function inizializzaAudio() {
+      if (!audioContext) {
+        audioContext = new (window.AudioContext || window.webkitAudioContext)();
 
-    limiter = audioContext.createDynamicsCompressor();
-    limiter.threshold.setValueAtTime(-1, audioContext.currentTime);
-    limiter.knee.setValueAtTime(0, audioContext.currentTime);
-    limiter.ratio.setValueAtTime(20, audioContext.currentTime);
-    limiter.attack.setValueAtTime(0.001, audioContext.currentTime);
-    limiter.release.setValueAtTime(0.05, audioContext.currentTime);
+        limiter = audioContext.createDynamicsCompressor();
+        limiter.threshold.setValueAtTime(-1, audioContext.currentTime);
+        limiter.knee.setValueAtTime(0, audioContext.currentTime);
+        limiter.ratio.setValueAtTime(20, audioContext.currentTime);
+        limiter.attack.setValueAtTime(0.001, audioContext.currentTime);
+        limiter.release.setValueAtTime(0.05, audioContext.currentTime);
 
-    masterGain = audioContext.createGain();
-    masterGain.gain.value = 1;
+        masterGain = audioContext.createGain();
+        masterGain.gain.value = 1;
 
-    masterGain.connect(limiter);
-    limiter.connect(audioContext.destination);
-  }
-}
+        masterGain.connect(limiter);
+        limiter.connect(audioContext.destination);
+      }
+    }
 
-function aggiornaMasterGain() {
-  const attive = Object.keys(noteAttive).length;
-  const volumeTotale = attive > 0 ? 1 / attive : 1;
-  masterGain.gain.setValueAtTime(volumeTotale, audioContext.currentTime);
-}
+    function aggiornaMasterGain() {
+      const attive = Object.keys(noteAttive).length;
+      const volumeTotale = attive > 0 ? 1 / attive : 1;
+      masterGain.gain.setValueAtTime(volumeTotale, audioContext.currentTime);
+    }
 
-function suonaNota(tasto) {
-  if (!frequenze[tasto]) return;
-  inizializzaAudio();
+    function suonaNota(tasto) {
+      if (!frequenze[tasto]) return;
+      inizializzaAudio();
 
-  if (noteAttive[tasto]) return;
+      if (noteAttive[tasto]) return;
 
-  const osc = audioContext.createOscillator();
-  const gainNode = audioContext.createGain();
+      const osc = audioContext.createOscillator();
+      const gainNode = audioContext.createGain();
 
-  osc.frequency.setValueAtTime(frequenze[tasto], audioContext.currentTime);
-  osc.type = 'sine';
+      osc.frequency.setValueAtTime(frequenze[tasto], audioContext.currentTime);
+      osc.type = 'sine';
 
-  gainNode.gain.setValueAtTime(1, audioContext.currentTime);
+      gainNode.gain.setValueAtTime(1, audioContext.currentTime);
 
-  osc.connect(gainNode).connect(masterGain);
-  osc.start();
+      osc.connect(gainNode).connect(masterGain);
+      osc.start();
 
-  noteAttive[tasto] = { osc, gainNode };
+      noteAttive[tasto] = { osc, gainNode };
 
-  const el = document.querySelector(`[data-key="${tasto}"]`);
-  if (el) el.classList.add("active");
+      const el = document.querySelector(`[data-key="${tasto}"]`);
+      if (el) el.classList.add("active");
 
-  aggiornaMasterGain();
-}
+      aggiornaMasterGain();
+    }
 
-function interrompiNota(tasto) {
-  const nota = noteAttive[tasto];
-  if (!nota) return;
+    function interrompiNota(tasto) {
+      const nota = noteAttive[tasto];
+      if (!nota) return;
 
-  const now = audioContext.currentTime;
-  const durataFade = 0.5;
+      const now = audioContext.currentTime;
+      const durataFade = 0.5;
 
-  nota.gainNode.gain.setValueAtTime(1, now);
-  nota.gainNode.gain.linearRampToValueAtTime(0, now + durataFade);
-  nota.osc.stop(now + durataFade);
+      nota.gainNode.gain.setValueAtTime(1, now);
+      nota.gainNode.gain.linearRampToValueAtTime(0, now + durataFade);
+      nota.osc.stop(now + durataFade);
 
-  delete noteAttive[tasto];
+      delete noteAttive[tasto];
 
-  const el = document.querySelector(`[data-key="${tasto}"]`);
-  if (el) el.classList.remove("active");
+      const el = document.querySelector(`[data-key="${tasto}"]`);
+      if (el) el.classList.remove("active");
 
-  setTimeout(aggiornaMasterGain, durataFade * 1000);
-}
+      setTimeout(aggiornaMasterGain, durataFade * 1000);
+    }
 
-document.addEventListener("keydown", (e) => {
-  if (frequenze[e.key]) {
-    if (e.key === "Tab") e.preventDefault();
-    suonaNota(e.key);
-  }
-});
+    document.addEventListener("keydown", (e) => {
+      if (frequenze[e.key]) {
+        if (e.key === "Tab") e.preventDefault();
+        suonaNota(e.key);
+      }
+    });
 
-document.addEventListener("keyup", (e) => {
-  interrompiNota(e.key);
-});
+    document.addEventListener("keyup", (e) => {
+      interrompiNota(e.key);
+    });
 
-document.querySelectorAll('.white-key, .black-key').forEach(el => {
-  el.addEventListener("mousedown", () => suonaNota(el.dataset.key));
-  el.addEventListener("mouseup", () => interrompiNota(el.dataset.key));
-  el.addEventListener("mouseleave", () => interrompiNota(el.dataset.key));
-});
+    document.querySelectorAll('.white-key, .black-key').forEach(el => {
+      el.addEventListener("mousedown", () => suonaNota(el.dataset.key));
+      el.addEventListener("mouseup", () => interrompiNota(el.dataset.key));
+      el.addEventListener("mouseleave", () => interrompiNota(el.dataset.key));
+    });
 
-document.body.addEventListener("click", inizializzaAudio);
-
+    document.body.addEventListener("click", inizializzaAudio);
   </script>
 </body>
 </html>
