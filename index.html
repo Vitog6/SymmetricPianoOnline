@@ -57,7 +57,6 @@
       top: 5px;
       width: 100%;
       text-align: center;
-      transform: rotate(180deg);
     }
   </style>
 </head>
@@ -70,6 +69,7 @@
       "Y": 523.25, "U": 587.33, "I": 659.26, "O": 740.00, "P": 830.61, "[": 932.33,
       "7": 554.37, "8": 622.25, "9": 698.46, "0": 784.00, "'": 880.00, "ì": 987.77
     };
+
     const noteBianche = [
       "Do", "Re", "Mi", "Fa#", "Sol#", "La#", "Do", "Re", "Mi", "Fa#", "Sol#", "La#"
     ];
@@ -85,25 +85,25 @@
 
     const keyboard = document.getElementById("keyboard");
 
-    // Spostamento dei tasti bianchi verso destra di una posizione e assegnazione del nome delle note
+    // Spostamento dei tasti bianchi verso destra di una posizione e scrittura delle note in ordine inverso
     tastiBianchi.forEach((key, i) => {
       const el = document.createElement("div");
       el.className = "white-key";
       el.style.left = `${60 * (i + 1)}px`;  // Aggiungi 1 per spostare a destra
       el.dataset.key = key;
-      el.innerHTML = `<div class="key-name">${noteBianche[i]}</div>`;  // Scrittura nuova della nota
+      el.innerHTML = `<div class="key-name">${noteBianche[11 - i]}</div>`;  // Scrittura specchiata delle note bianche
       keyboard.appendChild(el);
     });
 
     const offsetNeri = [40, 100, 160, 220, 280, 340, 400, 460, 520, 580, 640, 700];
 
-    // Assegnazione del nome delle note per i tasti neri
+    // Scrittura delle note nere in ordine inverso
     tastiNeri.forEach((key, i) => {
       const el = document.createElement("div");
       el.className = "black-key";
       el.style.left = `${offsetNeri[i]}px`;
       el.dataset.key = key;
-      el.innerHTML = `<div class="key-name">${noteNere[i]}</div>`;  // Scrittura nuova della nota
+      el.innerHTML = `<div class="key-name">${noteNere[11 - i]}</div>`;  // Scrittura specchiata delle note nere
       keyboard.appendChild(el);
     });
 
@@ -199,6 +199,7 @@
     });
 
     document.body.addEventListener("click", inizializzaAudio);
+
   </script>
 </body>
 </html>
