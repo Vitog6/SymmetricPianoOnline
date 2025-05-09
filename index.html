@@ -8,12 +8,13 @@
     body {
       background-color: #222;
       display: flex;
-      justify-content: flex-start; /* Mantiene il contenuto testuale a sinistra */
-      align-items: flex-start;
-      flex-direction: column;
-      height: 100vh;
+      justify-content: center; /* Centra la tastiera orizzontalmente */
+      align-items: center; /* Centra la tastiera verticalmente */
+      height: 100vh; /* Usa tutta l'altezza della finestra */
       margin: 0;
-      padding: 20px; /* Aggiunto padding per la parte scritta */
+      padding: 20px; /* Aggiungi padding per la parte scritta */
+      box-sizing: border-box;
+      flex-direction: column;
     }
     .intro {
       color: white; /* Cambiato il colore del testo in bianco */
@@ -23,7 +24,6 @@
       position: relative;
       width: 780px;
       height: 200px;
-      margin: 0 auto; /* Centra la tastiera */
       transform: rotate(180deg);
     }
     .white-key, .black-key {
@@ -84,24 +84,8 @@
       <li><strong>I</strong>: Mi</li>
       <li><strong>O</strong>: Fa#</li>
       <li><strong>P</strong>: Sol#</li>
-      <li><strong>è</strong>: La#</li>
-      <li><strong>1</strong>: Do#</li>
-      <li><strong>2</strong>: Re#</li>
-      <li><strong>3</strong>: Fa</li>
-      <li><strong>4</strong>: Sol</li>
-      <li><strong>5</strong>: La</li>
-      <li><strong>6</strong>: Si</li>
-      <li><strong>7</strong>: Do#</li>
-      <li><strong>8</strong>: Re#</li>
-      <li><strong>9</strong>: Fa</li>
-      <li><strong>0</strong>: Sol</li>
-      <li><strong>'</strong>: La</li>
-      <li><strong>ì</strong>: Si</li>
-    </ul>
-    <p>Questa tastiera è un progetto sperimentale che esplora una nuova disposizione dei tasti. Sebbene le note siano le stesse di un piano tradizionale, l'organizzazione dei tasti è completamente differente. In questo nuovo tipo di pianoforte, tutte le dodici note sono suddivise in toni e semitoni, con sei tasti neri e sei bianchi.</p>
-    <p>In questa tastiera, i tasti bianchi sono separati da un tono di distanza l'uno dall'altro, così come i tasti neri. Questa struttura consente di riprodurre qualsiasi brano musicale spostandosi tra i tasti in modo più fluido, permettendo di suonare gli stessi brani ma spostandosi di qualsivoglia numero di semitoni.</p>
-    <p>Questo è un esperimento per esplorare un nuovo tipo di pianoforte che potrebbe un giorno aprire la strada a modi più versatili e creativi di eseguire la musica. Spero che tu possa apprezzare la magnifica regolarità e simmatricità delle dodici note che sono, a mio parere, mal rapresentate dall' attuale disposizione dei tasti nei pianoforti comuni.</p>
-    <p> Il suono no è dei migliori lo so ma il mio obbiettivo era l' idea che spero possa esseere apprezzata. Grazie </p>
+      <strong>è</strong>: La#
+      </ul>
   </div>
   <div class="keyboard" id="keyboard"></div>
   <script>
@@ -111,6 +95,7 @@
       "Y": 523.25, "U": 587.33, "I": 659.26, "O": 740.00, "P": 830.61, "è": 932.33,
       "7": 554.37, "8": 622.25, "9": 698.46, "0": 784.00, "'": 880.00, "ì": 987.77
     };
+
     const noteBianche = [
       "Do", "Re", "Mi", "Fa#", "Sol#", "La#", "Do", "Re", "Mi", "Fa#", "Sol#", "La#"
     ].reverse();
@@ -126,25 +111,23 @@
 
     const keyboard = document.getElementById("keyboard");
 
-    // Spostamento dei tasti bianchi verso destra di una posizione e assegnazione del nome delle note
     tastiBianchi.forEach((key, i) => {
       const el = document.createElement("div");
       el.className = "white-key";
-      el.style.left = `${60 * (i + 1)}px`;  // Aggiungi 1 per spostare a destra
+      el.style.left = `${60 * (i + 1)}px`;
       el.dataset.key = key;
-      el.innerHTML = `<div class="key-name">${noteBianche[i]}</div>`;  // Scrittura nuova della nota
+      el.innerHTML = `<div class="key-name">${noteBianche[i]}</div>`;
       keyboard.appendChild(el);
     });
 
     const offsetNeri = [40, 100, 160, 220, 280, 340, 400, 460, 520, 580, 640, 700];
 
-    // Assegnazione del nome delle note per i tasti neri
     tastiNeri.forEach((key, i) => {
       const el = document.createElement("div");
       el.className = "black-key";
       el.style.left = `${offsetNeri[i]}px`;
       el.dataset.key = key;
-      el.innerHTML = `<div class="key-name">${noteNere[i]}</div>`;  // Scrittura nuova della nota
+      el.innerHTML = `<div class="key-name">${noteNere[i]}</div>`;
       keyboard.appendChild(el);
     });
 
