@@ -12,12 +12,29 @@
       align-items: center;
       height: 100vh;
       margin: 0;
+      color: #fff;
+    }
+    .intro {
+      color: #fff;
+      text-align: center;
+      margin-bottom: 40px;
+      font-size: 18px;
+      line-height: 1.5;
+    }
+    .intro h1 {
+      font-size: 32px;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+    .intro p, .intro ul {
+      font-size: 16px;
     }
     .keyboard {
       position: relative;
       width: 780px;
       height: 200px;
       transform: rotate(180deg);
+      margin: 0 auto; /* Centrato */
     }
     .white-key, .black-key {
       position: absolute;
@@ -93,8 +110,8 @@
     </ul>
     <p>Questa tastiera è un progetto sperimentale che esplora una nuova disposizione dei tasti. Sebbene le note siano le stesse di un piano tradizionale, l'organizzazione dei tasti è completamente differente. In questo nuovo tipo di pianoforte, tutte le dodici note sono suddivise in toni e semitoni, con sei tasti neri e sei bianchi.</p>
     <p>In questa tastiera, i tasti bianchi sono separati da un tono di distanza l'uno dall'altro, così come i tasti neri. Questa struttura consente di riprodurre qualsiasi brano musicale spostandosi tra i tasti in modo più fluido, permettendo di suonare gli stessi brani ma spostandosi di qualsivoglia numero di semitoni.</p>
-    <p>Questo è un esperimento per esplorare un nuovo tipo di pianoforte che potrebbe un giorno aprire la strada a modi più versatili e creativi di eseguire la musica. Spero che tu possa apprezzare la magnifica regolarità e simmatricità delle dodici note che sono, a mio parere, mal rapresentate dall' attuale disposizione dei tasti nei pianoforti comuni.</p>
-    <p> Il suono no è dei migliori lo so ma il mio obbiettivo era l' idea che spero possa esseere apprezzata. Grazie </p>
+    <p>Questo è un esperimento per esplorare un nuovo tipo di pianoforte che potrebbe un giorno aprire la strada a modi più versatili e creativi di eseguire la musica. Spero che tu possa apprezzare la magnifica regolarità e simmetria delle dodici note che sono, a mio parere, mal rappresentate dall'attuale disposizione dei tasti nei pianoforti comuni.</p>
+    <p>Il suono non è dei migliori lo so, ma il mio obiettivo era l'idea che spero possa essere apprezzata. Grazie!</p>
   </div>
   <div class="keyboard" id="keyboard"></div>
   <script>
@@ -104,13 +121,14 @@
       "Y": 523.25, "U": 587.33, "I": 659.26, "O": 740.00, "P": 830.61, "è": 932.33,
       "7": 554.37, "8": 622.25, "9": 698.46, "0": 784.00, "'": 880.00, "ì": 987.77
     };
-const noteBianche = [
-  "Do", "Re", "Mi", "Fa#", "Sol#", "La#", "Do", "Re", "Mi", "Fa#", "Sol#", "La#"
-].reverse();
+    const noteBianche = [
+      "Do", "Re", "Mi", "Fa#", "Sol#", "La#", "Do", "Re", "Mi", "Fa#", "Sol#", "La#"
+    ].reverse();
 
-const noteNere = [
-  "Do#", "Re#", "Fa", "Sol", "La", "Si", "Do#", "Re#", "Fa", "Sol", "La", "Si"
-].reverse();
+    const noteNere = [
+      "Do#", "Re#", "Fa", "Sol", "La", "Si", "Do#", "Re#", "Fa", "Sol", "La", "Si"
+    ].reverse();
+
     const tastiBianchi = ["Tab", "Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P", "["];
     const tastiNeri = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0", "'", "ì"];
 
@@ -119,25 +137,23 @@ const noteNere = [
 
     const keyboard = document.getElementById("keyboard");
 
-    // Spostamento dei tasti bianchi verso destra di una posizione e assegnazione del nome delle note
     tastiBianchi.forEach((key, i) => {
       const el = document.createElement("div");
       el.className = "white-key";
       el.style.left = `${60 * (i + 1)}px`;  // Aggiungi 1 per spostare a destra
       el.dataset.key = key;
-      el.innerHTML = `<div class="key-name">${noteBianche[i]}</div>`;  // Scrittura nuova della nota
+      el.innerHTML = `<div class="key-name">${noteBianche[i]}</div>`;
       keyboard.appendChild(el);
     });
 
     const offsetNeri = [40, 100, 160, 220, 280, 340, 400, 460, 520, 580, 640, 700];
 
-    // Assegnazione del nome delle note per i tasti neri
     tastiNeri.forEach((key, i) => {
       const el = document.createElement("div");
       el.className = "black-key";
       el.style.left = `${offsetNeri[i]}px`;
       el.dataset.key = key;
-      el.innerHTML = `<div class="key-name">${noteNere[i]}</div>`;  // Scrittura nuova della nota
+      el.innerHTML = `<div class="key-name">${noteNere[i]}</div>`;
       keyboard.appendChild(el);
     });
 
@@ -180,7 +196,7 @@ const noteNere = [
       const osc = audioContext.createOscillator();
       const gainNode = audioContext.createGain();
 
-   osc.frequency.setValueAtTime(frequenze[tasto], audioContext.currentTime);
+      osc.frequency.setValueAtTime(frequenze[tasto], audioContext.currentTime);
       osc.type = 'sine';
 
       gainNode.gain.setValueAtTime(1, audioContext.currentTime);
