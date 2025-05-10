@@ -74,7 +74,7 @@
     <h1>Benvenuti alla tastiera musicale sperimentale</h1>
     <p>Questa è una tastiera musicale che emula le note di un pianoforte tradizionale, ma con una disposizione dei tasti completamente diversa. Ogni tasto corrisponde a una delle 12 note della scala musicale, e le note sono assegnate ai tasti come segue:</p>
     <ul>
-      <p>Per suonare il pianoforte si possono premere i tasti direttamente o premere da tastiera i seguenti tasti:</p>
+      <p>Per suonare il pianoforte si possono premere i tasti direttamente con mouse o tramite touch screen o premere da tastiera i seguenti tasti:</p>
         <p>La prima scala ha i tasti bainchi dallo "Shift" alla "è" e i tasti neri dall "1" al "ì". La seconda scala ha i tasti bianchi da "<" e i neri tasti dalla "a" alla "ù".</p>
     <p> INSERIRE IL BLOCCO MAIUSCOLO PER SUONARE. Questa tastiera è un progetto sperimentale che esplora una nuova disposizione dei tasti. Sebbene le note siano le stesse di un piano tradizionale, l'organizzazione dei tasti è completamente differente. In questo nuovo tipo di pianoforte, tutte le dodici note sono suddivise in toni e semitoni, con sei tasti neri e sei bianchi.</p>
     <p>In questa tastiera, i tasti bianchi sono separati da un tono di distanza l'uno dall'altro, così come i tasti neri. Questa struttura consente di riprodurre qualsiasi brano musicale spostandosi tra i tasti in modo più fluido, permettendo di suonare gli stessi brani ma spostandosi di qualsivoglia numero di semitoni.</p>
@@ -217,8 +217,6 @@
 
    const notePremute = new Set(); // Per tenere traccia delle note premute
 
-const notePremute = new Set(); // Per tenere traccia delle note premute
-
 document.querySelectorAll('.white-key, .black-key').forEach(el => {
   el.addEventListener("pointerdown", (e) => {
     e.preventDefault(); // previene selezioni indesiderate
@@ -230,27 +228,21 @@ document.querySelectorAll('.white-key, .black-key').forEach(el => {
       notePremute.add(key); // Aggiungi la nota alla lista delle note premute
     }
 
-    // Mantieni il mouse/touch catturato dal tasto
-    el.setPointerCapture(e.pointerId);  
+    el.setPointerCapture(e.pointerId);  // Mantieni il mouse/touch catturato dal tasto
   });
 
   el.addEventListener("pointerup", (e) => {
     const key = el.dataset.key;
-
-    // Se la nota è stata premuta, la interrompiamo
     if (notePremute.has(key)) {
       interrompiNota(key);
       notePremute.delete(key); // Rimuovi la nota dalla lista delle note premute
     }
 
-    // Rilascia il controllo del mouse/touch
-    el.releasePointerCapture(e.pointerId);
+    el.releasePointerCapture(e.pointerId);  // Rilascia il controllo del mouse/touch
   });
 
   el.addEventListener("pointercancel", (e) => {
     const key = el.dataset.key;
-
-    // Gestione di "pointercancel" in caso di annullamento del puntatore
     if (notePremute.has(key)) {
       interrompiNota(key);
       notePremute.delete(key); // Rimuovi la nota dalla lista delle note premute
