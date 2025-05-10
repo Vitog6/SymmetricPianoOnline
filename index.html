@@ -11,11 +11,14 @@
       flex-direction: column;
       align-items: center;
       margin: 0;
+      padding-bottom: 100px; /* Aggiunge spazio sotto la pagina per evitare che le tastiere siano troppo in basso */
     }
     .intro {
       color: white;
       padding: 20px;
       max-width: 900px;
+      text-align: center;
+      margin-bottom: 30px;
     }
     .keyboard {
       position: relative;
@@ -69,7 +72,9 @@
 <body>
   <div class="intro">
     <h1>Benvenuti alla tastiera musicale sperimentale</h1>
-    <p>Questa è una tastiera musicale che emula le note di un pianoforte tradizionale, ma con una disposizione dei tasti completamente diversa...</p>
+    <p>Questa è una tastiera musicale che emula le note di un pianoforte tradizionale, ma con una disposizione dei tasti completamente diversa. Puoi premere i tasti della tastiera per suonare le note. Le due tastiere sono separate, una per la prima scala e una per la seconda. </p>
+    <p><strong>Prima scala:</strong> <span style="font-weight: bold;">E, Q, W, E, R, T, Y, U, I</span></p>
+    <p><strong>Seconda scala:</strong> <span style="font-weight: bold;">A, S, D, F, G, H, J, K, L, ò, à, ù, Shift</span></p>
   </div>
   <div class="keyboard" id="keyboard"></div>
   <div class="keyboard" id="keyboard2"></div>
