@@ -112,8 +112,7 @@
       keyboard.appendChild(el);
     });
 
-    // Modifica i tasti della seconda tastiera con lettere maiuscole
-    const tastiBianchi2 = ["<", "Z", "X", "C", "V", "B", "N", "M", ",", ".", "-", "Shift"].reverse();
+    const tastiBianchi2 = ["<", "z", "x", "c", "v", "b", "n", "m", ",", ".", "-", "Shift"].reverse();
     const noteBianche2 = noteBianche;
     const tastiNeri2 = ["A", "S", "D", "F", "G", "H", "J", "K", "L", "ò", "à", "ù"].reverse();
     const noteNere2 = noteNere;
@@ -195,14 +194,14 @@
     }
 
     document.addEventListener("keydown", (e) => {
-      if (frequenze[e.key.toUpperCase()]) {  // Assicurati di usare maiuscole
+      if (frequenze[e.key]) {
         if (e.key === "Tab") e.preventDefault();
-        suonaNota(e.key.toUpperCase());
+        suonaNota(e.key);
       }
     });
 
     document.addEventListener("keyup", (e) => {
-      interrompiNota(e.key.toUpperCase());  // Assicurati di usare maiuscole
+      interrompiNota(e.key);
     });
 
     document.querySelectorAll('.white-key, .black-key').forEach(el => {
@@ -212,6 +211,7 @@
     });
 
     document.body.addEventListener("click", inizializzaAudio);
+
   </script>
 </body>
 </html>
