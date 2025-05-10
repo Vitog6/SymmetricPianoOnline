@@ -217,6 +217,8 @@
 
    const notePremute = new Set(); // Per tenere traccia delle note premute
 
+const notePremute = new Set(); // Per tenere traccia delle note premute
+
 document.querySelectorAll('.white-key, .black-key').forEach(el => {
   el.addEventListener("pointerdown", (e) => {
     e.preventDefault(); // previene selezioni indesiderate
@@ -228,21 +230,27 @@ document.querySelectorAll('.white-key, .black-key').forEach(el => {
       notePremute.add(key); // Aggiungi la nota alla lista delle note premute
     }
 
-    el.setPointerCapture(e.pointerId);  // Mantieni il mouse/touch catturato dal tasto
+    // Mantieni il mouse/touch catturato dal tasto
+    el.setPointerCapture(e.pointerId);  
   });
 
   el.addEventListener("pointerup", (e) => {
     const key = el.dataset.key;
+
+    // Se la nota è stata premuta, la interrompiamo
     if (notePremute.has(key)) {
       interrompiNota(key);
       notePremute.delete(key); // Rimuovi la nota dalla lista delle note premute
     }
 
-    el.releasePointerCapture(e.pointerId);  // Rilascia il controllo del mouse/touch
+    // Rilascia il controllo del mouse/touch
+    el.releasePointerCapture(e.pointerId);
   });
 
   el.addEventListener("pointercancel", (e) => {
     const key = el.dataset.key;
+
+    // Gestione di "pointercancel" in caso di annullamento del puntatore
     if (notePremute.has(key)) {
       interrompiNota(key);
       notePremute.delete(key); // Rimuovi la nota dalla lista delle note premute
