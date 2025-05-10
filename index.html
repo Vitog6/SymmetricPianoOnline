@@ -214,31 +214,32 @@
     document.addEventListener("keyup", (e) => {
       interrompiNota(e.key);
     });
-const touchesAttive = {}; // per tenere traccia dei tocchi attivi
+// Multitouch su touch screen
+const touchesAttive = {};
 
 function getKeyFromElement(el) {
   return el?.closest('.white-key, .black-key')?.dataset?.key;
 }
 
 function handleTouchStart(e) {
-  e.preventDefault();
   for (const touch of e.changedTouches) {
     const el = document.elementFromPoint(touch.clientX, touch.clientY);
     const key = getKeyFromElement(el);
     if (key && !touchesAttive[touch.identifier]) {
       touchesAttive[touch.identifier] = key;
       suonaNota(key);
+      e.preventDefault(); // Previene lo scroll solo se si è toccato un tasto
     }
   }
 }
 
 function handleTouchEnd(e) {
-  e.preventDefault();
   for (const touch of e.changedTouches) {
     const key = touchesAttive[touch.identifier];
     if (key) {
       interrompiNota(key);
       delete touchesAttive[touch.identifier];
+      e.preventDefault();
     }
   }
 }
@@ -246,6 +247,21 @@ function handleTouchEnd(e) {
 document.addEventListener('touchstart', handleTouchStart, { passive: false });
 document.addEventListener('touchend', handleTouchEnd, { passive: false });
 document.addEventListener('touchcancel', handleTouchEnd, { passive: false });
+
+// Supporto per mouse (clic multipli simulati)
+document.querySelectorAll('.white-key, .black-key').forEach(el => {
+  el.addEventListener("mousedown", (e) => {
+    suonaNota(el.dataset.key);
+  });
+
+  el.addEventListener("mouseup", (e) => {
+    interrompiNota(el.dataset.key);
+  });
+
+  el.addEventListener("mouseleave", (e) => {
+    interrompiNota(el.dataset.key);
+  });
+});
     document.body.addEventListener("click", inizializzaAudio);
   </script>
 </body>
