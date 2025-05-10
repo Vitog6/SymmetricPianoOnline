@@ -214,35 +214,38 @@
     document.addEventListener("keyup", (e) => {
       interrompiNota(e.key);
     });
-const pointersAttivi = {}; // Oggetto per tenere traccia dei pointer attivi
+const touchesAttive = {}; // per tenere traccia dei tocchi attivi
 
-document.querySelectorAll('.white-key, .black-key').forEach(el => {
-  el.addEventListener("pointerdown", (e) => {
-    e.preventDefault(); // Previene selezioni indesiderate
-    if (!pointersAttivi[e.pointerId]) { // Controlla se il pointer è già attivo
-      suonaNota(el.dataset.key); // Suona la nota se non è già attiva
-      pointersAttivi[e.pointerId] = el.dataset.key; // Memorizza la chiave associata al pointer
-      el.setPointerCapture(e.pointerId); // Cattura l'evento del pointer
-    }
-  });
+function getKeyFromElement(el) {
+  return el?.closest('.white-key, .black-key')?.dataset?.key;
+}
 
-  el.addEventListener("pointerup", (e) => {
-    // Ferma la nota solo se il pointerID corrisponde
-    if (pointersAttivi[e.pointerId]) {
-      interrompiNota(pointersAttivi[e.pointerId]); // Ferma la nota
-      delete pointersAttivi[e.pointerId]; // Rimuove il pointer dall'oggetto
+function handleTouchStart(e) {
+  e.preventDefault();
+  for (const touch of e.changedTouches) {
+    const el = document.elementFromPoint(touch.clientX, touch.clientY);
+    const key = getKeyFromElement(el);
+    if (key && !touchesAttive[touch.identifier]) {
+      touchesAttive[touch.identifier] = key;
+      suonaNota(key);
     }
-    el.releasePointerCapture(e.pointerId); // Rilascia il pointer
-  });
+  }
+}
 
-  el.addEventListener("pointercancel", (e) => {
-    // Ferma la nota se l'evento del pointer viene cancellato
-    if (pointersAttivi[e.pointerId]) {
-      interrompiNota(pointersAttivi[e.pointerId]);
-      delete pointersAttivi[e.pointerId]; // Rimuove il pointer
+function handleTouchEnd(e) {
+  e.preventDefault();
+  for (const touch of e.changedTouches) {
+    const key = touchesAttive[touch.identifier];
+    if (key) {
+      interrompiNota(key);
+      delete touchesAttive[touch.identifier];
     }
-  });
-});
+  }
+}
+
+document.addEventListener('touchstart', handleTouchStart, { passive: false });
+document.addEventListener('touchend', handleTouchEnd, { passive: false });
+document.addEventListener('touchcancel', handleTouchEnd, { passive: false });
     document.body.addEventListener("click", inizializzaAudio);
   </script>
 </body>
