@@ -215,20 +215,27 @@
       interrompiNota(e.key);
     });
 
-    document.querySelectorAll('.white-key, .black-key').forEach(el => {
+  const pointersAttivi = {}; // Oggetto per tenere traccia dei pointer attivi
+
+document.querySelectorAll('.white-key, .black-key').forEach(el => {
   el.addEventListener("pointerdown", (e) => {
-    e.preventDefault(); // previene selezioni indesiderate
-    suonaNota(el.dataset.key);
-    el.setPointerCapture(e.pointerId);
+    e.preventDefault(); // Previene selezioni indesiderate
+    if (!pointersAttivi[e.pointerId]) { // Controlla se il pointer è già attivo
+      suonaNota(el.dataset.key); // Suona la nota se non è già attiva
+      pointersAttivi[e.pointerId] = el.dataset.key; // Memorizza la chiave associata al pointer
+      el.setPointerCapture(e.pointerId); // Cattura l'evento del pointer
+    }
   });
 
   el.addEventListener("pointerup", (e) => {
-    interrompiNota(el.dataset.key);
-    el.releasePointerCapture(e.pointerId);
+    interrompiNota(el.dataset.key); // Ferma la nota quando il pointer si solleva
+    delete pointersAttivi[e.pointerId]; // Rimuove il pointer dall'oggetto
+    el.releasePointerCapture(e.pointerId); // Rilascia il pointer
   });
 
   el.addEventListener("pointercancel", (e) => {
-    interrompiNota(el.dataset.key);
+    interrompiNota(el.dataset.key); // Ferma la nota se l'evento del pointer viene cancellato
+    delete pointersAttivi[e.pointerId]; // Rimuove il pointer
   });
 });
     document.body.addEventListener("click", inizializzaAudio);
