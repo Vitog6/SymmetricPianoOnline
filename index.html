@@ -214,8 +214,7 @@
     document.addEventListener("keyup", (e) => {
       interrompiNota(e.key);
     });
-
-  const pointersAttivi = {}; // Oggetto per tenere traccia dei pointer attivi
+const pointersAttivi = {}; // Oggetto per tenere traccia dei pointer attivi
 
 document.querySelectorAll('.white-key, .black-key').forEach(el => {
   el.addEventListener("pointerdown", (e) => {
@@ -228,14 +227,20 @@ document.querySelectorAll('.white-key, .black-key').forEach(el => {
   });
 
   el.addEventListener("pointerup", (e) => {
-    interrompiNota(el.dataset.key); // Ferma la nota quando il pointer si solleva
-    delete pointersAttivi[e.pointerId]; // Rimuove il pointer dall'oggetto
+    // Ferma la nota solo se il pointerID corrisponde
+    if (pointersAttivi[e.pointerId]) {
+      interrompiNota(pointersAttivi[e.pointerId]); // Ferma la nota
+      delete pointersAttivi[e.pointerId]; // Rimuove il pointer dall'oggetto
+    }
     el.releasePointerCapture(e.pointerId); // Rilascia il pointer
   });
 
   el.addEventListener("pointercancel", (e) => {
-    interrompiNota(el.dataset.key); // Ferma la nota se l'evento del pointer viene cancellato
-    delete pointersAttivi[e.pointerId]; // Rimuove il pointer
+    // Ferma la nota se l'evento del pointer viene cancellato
+    if (pointersAttivi[e.pointerId]) {
+      interrompiNota(pointersAttivi[e.pointerId]);
+      delete pointersAttivi[e.pointerId]; // Rimuove il pointer
+    }
   });
 });
     document.body.addEventListener("click", inizializzaAudio);
