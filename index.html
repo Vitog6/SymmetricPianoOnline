@@ -216,10 +216,21 @@
     });
 
     document.querySelectorAll('.white-key, .black-key').forEach(el => {
-      el.addEventListener("mousedown", () => suonaNota(el.dataset.key));
-      el.addEventListener("mouseup", () => interrompiNota(el.dataset.key));
-      el.addEventListener("mouseleave", () => interrompiNota(el.dataset.key));
-    });
+  el.addEventListener("pointerdown", (e) => {
+    e.preventDefault(); // previene selezioni indesiderate
+    suonaNota(el.dataset.key);
+    el.setPointerCapture(e.pointerId);
+  });
+
+  el.addEventListener("pointerup", (e) => {
+    interrompiNota(el.dataset.key);
+    el.releasePointerCapture(e.pointerId);
+  });
+
+  el.addEventListener("pointercancel", (e) => {
+    interrompiNota(el.dataset.key);
+  });
+});
 
     document.body.addEventListener("click", inizializzaAudio);
   </script>
